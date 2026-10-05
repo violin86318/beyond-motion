@@ -1,4 +1,4 @@
-# violin · beyondmotion — 个人网站
+# violin · 言上文化 · Beyond-Motion — 个人网站
 
 代码即作品。Astro 5 静态站，139 线性编码视觉系统。
 
