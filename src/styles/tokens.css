@@ -1,0 +1,41 @@
+/* 设计令牌 — 139 线性编码体系（spec §2） */
+:root {
+  --paper: #f4f1e8;
+  --ink: #1c1a16;
+  --faint: rgba(28, 26, 22, .14);
+  --or: #ff5a1f;
+  --blue: #3a5a8c;
+  --quiet: rgba(28, 26, 22, .55);
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --serif: "Noto Serif SC", "Songti SC", serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+img, canvas, video, iframe { max-width: 100%; }
+
+/* 通用小字注记 */
+.annot {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--quiet);
+}
+
+/* 工艺细节：选区、焦点、滚动条 */
+::selection { background: var(--or); color: var(--paper); }
+:focus-visible { outline: 1.5px solid var(--or); outline-offset: 3px; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: rgba(28, 26, 22, .25); border: 3px solid var(--paper); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--or); }

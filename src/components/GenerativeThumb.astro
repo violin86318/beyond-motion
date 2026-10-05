@@ -1,0 +1,32 @@
+---
+/** GenerativeThumb — 无海报帧时的 seeded 生成缩略图（黑底橙线，全站统一）。 */
+interface Props { seed: number; width?: number; height?: number; class?: string; }
+const { seed, width = 480, height = 288, class: cls = '' } = Astro.props;
+---
+<canvas class={`gen-thumb ${cls}`} data-seed={seed} width={width} height={height}></canvas>
+
+<script>
+  function paintThumbs() {
+    document.querySelectorAll<HTMLCanvasElement>('canvas.gen-thumb:not([data-painted])').forEach(cv => {
+      cv.dataset.painted = '1';
+      const c = cv.getContext('2d')!;
+      let s = Number(cv.dataset.seed || 1);
+      const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+      const W = cv.width, H = cv.height;
+      c.fillStyle = '#0b0a08';
+      c.fillRect(0, 0, W, H);
+      for (let i = 0; i < 140; i++) {
+        c.strokeStyle = rnd() > .84 ? 'rgba(255,90,31,.8)' : `rgba(238,233,225,${.08 + rnd() * .25})`;
+        c.lineWidth = rnd() > .9 ? 2 : 1;
+        const x = rnd() * W, y = rnd() * H, hor = rnd() > .5, l = 8 + rnd() * (W * .3);
+        c.beginPath(); c.moveTo(x, y);
+        hor ? c.lineTo(x + l, y) : c.lineTo(x, y + l * .6);
+        c.stroke();
+      }
+      c.fillStyle = 'rgba(255,90,31,.9)';
+      c.fillRect(20 + rnd() * (W - 40), 20 + rnd() * (H - 40), 3, 3);
+    });
+  }
+  paintThumbs();
+  document.addEventListener('astro:page-load', paintThumbs);
+</script>

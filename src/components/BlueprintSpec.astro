@@ -1,0 +1,91 @@
+---
+/** BlueprintSpec — 048 变奏：作品技术栈的工程图式标注块。 */
+interface Props { tech: string[]; title: string; date: string; medium: string; }
+const { tech, title, date, medium } = Astro.props;
+---
+<figure class="sheet">
+  <figcaption class="annot">TECHNICAL SHEET — 技术图纸</figcaption>
+  <div class="inner">
+    <div class="row" style={`--i:0`}>
+      <span class="leader"></span>
+      <span class="callout annot">00 / CODE AS WORK — 全部由代码生成</span>
+    </div>
+    {tech.map((t, i) => (
+      <div class="row" style={`--i:${i + 1}`}>
+        <span class="leader"></span>
+        <span class="callout annot">{String(i + 1).padStart(2, '0')} / {t}</span>
+      </div>
+    ))}
+  </div>
+  <div class="titleblock">
+    <div>TITLE<br /><b>{title}</b></div>
+    <div>SCALE<br /><b>1:1</b></div>
+    <div>MEDIUM<br /><b>{medium}</b></div>
+    <div>DATE<br /><b>{date}</b></div>
+  </div>
+</figure>
+
+<style>
+  .sheet {
+    background: rgba(255, 255, 255, .55);
+    border: 1.5px solid var(--or);
+    padding: 14px;
+  }
+  .sheet > .annot { color: var(--or); margin-bottom: 10px; display: block; }
+  .inner {
+    border: 1px dashed rgba(255, 90, 31, .5);
+    padding: 26px 22px;
+    display: grid;
+    gap: 18px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-left: calc(var(--i) * 22px);
+    opacity: 0;
+    animation: row-in .7s cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: calc(.25s + var(--i) * .12s);
+  }
+  @keyframes row-in {
+    from { opacity: 0; transform: translateX(-14px); }
+    to { opacity: 1; transform: none; }
+  }
+  .leader {
+    width: 34px;
+    height: 1px;
+    background: var(--or);
+    flex: none;
+    position: relative;
+    transform-origin: left;
+    animation: leader-draw .6s cubic-bezier(.22, 1, .36, 1) both;
+    animation-delay: calc(.25s + var(--i) * .12s);
+  }
+  @keyframes leader-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .leader::before {
+    content: "";
+    position: absolute;
+    left: -2px; top: -2px;
+    width: 5px; height: 5px;
+    border: 1px solid var(--or);
+    border-radius: 50%;
+    background: var(--paper);
+  }
+  .callout { color: var(--ink); white-space: nowrap; }
+  .titleblock {
+    margin-top: 12px;
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--ink);
+  }
+  .titleblock div { padding: 10px 14px; border-right: 1px solid var(--ink); line-height: 1.7; flex: 0 1 auto; }
+  .titleblock div:first-child { flex: 1 1 auto; }
+  .titleblock div:last-child { border-right: 0; }
+  .titleblock b { font-size: 12px; }
+
+  @media (max-width: 720px) {
+    .titleblock { flex-wrap: wrap; }
+    .titleblock div { flex: 1 1 40%; border-bottom: 1px solid var(--ink); }
+    .callout { white-space: normal; }
+  }
+</style>

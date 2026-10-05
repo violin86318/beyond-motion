@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+
+const notes = (await getCollection('notes'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+const KIND: Record<string, string> = { log: '手记', piece: '作品文' };
+---
+<BaseLayout title="手记">
+  <section class="head" data-reveal>
+    <span class="annot">VOL.01 — 私人档案</span>
+    <h1>追问者的手记</h1>
+    <p class="annot">{notes.length} 篇 · 学习笔记与 AI 协作写作的成品</p>
+  </section>
+
+  <div class="list">
+    {notes.map((n, i) => (
+      <a class="entry" href={`/notes/${n.id}`} data-reveal style={`--rd:${i * .08}s`}>
+        <span class="cat annot">
+          <b>NO.{String(i + 1).padStart(3, '0')}</b>
+          {KIND[n.data.kind]}<br />{n.data.date}
+        </span>
+        <span class="body">
+          <h2>{n.data.title}</h2>
+          <p>{n.data.description}</p>
+        </span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .head { padding: 80px 0 56px; }
+  .head h1 {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(40px, 6vw, 72px);
+    letter-spacing: .02em;
+    margin: 16px 0 12px;
+  }
+
+  .list { border-top: 1px solid rgba(28,26,22,.25); }
+  .entry {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 48px;
+    padding: 44px 0;
+    border-bottom: 1px solid rgba(28,26,22,.15);
+    text-decoration: none;
+    transition: background .25s;
+  }
+  .entry:hover { background: rgba(255,90,31,.04); }
+  .cat { line-height: 2.1; }
+  .cat b { display: block; color: var(--or); font-weight: 400; margin-bottom: 4px; }
+  .body h2 {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: .02em;
+    margin-bottom: 12px;
+  }
+  .entry:hover .body h2 { color: var(--or); }
+  .body p { font-size: 13.5px; line-height: 2; color: var(--quiet); max-width: 32em; }
+
+  @media (max-width: 720px) {
+    .entry { grid-template-columns: 1fr; gap: 14px; }
+  }
+</style>

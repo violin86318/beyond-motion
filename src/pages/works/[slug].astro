@@ -1,0 +1,161 @@
+---
+import { getCollection, render } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
+import BaseLayout from '../../components/BaseLayout.astro';
+import BlueprintSpec from '../../components/BlueprintSpec.astro';
+import GenerativeThumb from '../../components/GenerativeThumb.astro';
+
+export async function getStaticPaths() {
+  const works = (await getCollection('works'))
+    .sort((a, b) => b.data.date.localeCompare(a.data.date));
+  return works.map((work, i) => ({
+    params: { slug: work.id },
+    props: { work, no: String(i + 1).padStart(3, '0') },
+  }));
+}
+
+const { work, no } = Astro.props;
+const { title, type, date, description, tech, source, poster, url } = work.data;
+const { Content } = await render(work);
+
+const MEDIUM: Record<string, string> = { live: 'HTML·LIVE', video: 'VIDEO', image: 'IMAGE', music: 'AUDIO' };
+const TAG: Record<string, string> = { live: 'RUNS LIVE', video: 'VIDEO', image: 'IMAGE', music: 'MUSIC' };
+
+// 资产探测（构建期）；作品资产放在 /w/<slug>/ 以避免与详情页路由冲突
+// live 作品优先使用已部署的在线版本（frontmatter url），否则回退到本地副本
+const pub = (f: string) => path.resolve(process.cwd(), 'public', 'w', work.id, f);
+const has = (f: string) => fs.existsSync(pub(f));
+const liveEntry = type === 'live' ? (url ?? (has('index.html') ? `/w/${work.id}/index.html` : null)) : null;
+const videoFile = type === 'video' && has('video.mp4') ? `/w/${work.id}/video.mp4` : null;
+const audioFile = type === 'music' && has('audio.mp3') ? `/w/${work.id}/audio.mp3` : null;
+const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000, 7);
+---
+<BaseLayout title={title} description={description}>
+  <article class="detail">
+    <header class="head" data-reveal>
+      <div class="row annot">
+        <a href="/works" class="back">← 作品库</a>
+        <span>NO.{no}</span>
+        <span class:list={['tag', { live: type === 'live' }]}>{TAG[type]}</span>
+      </div>
+      <h1>{title}</h1>
+      <p class="desc">{description}</p>
+    </header>
+
+    <section class="stage" data-reveal>
+      {type === 'live' && liveEntry && (
+        <div class="runner" id="runner" data-src={liveEntry}>
+          <div class="cover" id="cover">
+            {poster ? <img src={poster} alt={title} /> : <GenerativeThumb seed={seed} width={960} height={576} />}
+            <button class="run" id="run-btn">▶ 运行作品</button>
+            <span class="annot hint">作品包含声音 · 在网页内实时渲染</span>
+          </div>
+        </div>
+      )}
+      {type === 'live' && !liveEntry && <p class="annot pending">作品文件整理中，即将上线。</p>}
+
+      {type === 'video' && videoFile && (
+        <video controls preload="metadata" poster={poster} src={videoFile}></video>
+      )}
+      {type === 'video' && !videoFile && (
+        <div class="cover static">
+          {poster ? <img src={poster} alt={title} /> : <GenerativeThumb seed={seed} width={960} height={576} />}
+          <span class="annot hint">成片整理中，即将上线</span>
+        </div>
+      )}
+
+      {type === 'image' && (
+        <div class="cover static">
+          {poster ? <img src={poster} alt={title} /> : <GenerativeThumb seed={seed} width={960} height={576} />}
+        </div>
+      )}
+
+      {type === 'music' && audioFile && <audio controls src={audioFile}></audio>}
+      {type === 'music' && !audioFile && <p class="annot pending">音频整理中，即将上线。</p>}
+    </section>
+
+    <BlueprintSpec tech={tech} title={title} date={date} medium={MEDIUM[type]} />
+
+    <section class="note" data-reveal>
+      <h2 class="annot">创作手记</h2>
+      <div class="prose">
+        <Content />
+      </div>
+      {source && <p class="annot"><a href={source} target="_blank" rel="noopener">源码 →</a></p>}
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .detail { max-width: 880px; margin: 0 auto; }
+  .head { padding: 64px 0 36px; }
+  .head .row { display: flex; align-items: center; gap: 20px; margin-bottom: 22px; }
+  .back { text-decoration: none; }
+  .back:hover { color: var(--or); }
+  .tag { color: var(--blue); border: 1px solid rgba(58,90,140,.4); padding: 3px 9px; }
+  .tag.live { color: var(--or); border-color: rgba(255,90,31,.45); }
+  .head h1 { font-weight: 900; font-size: clamp(36px, 5.5vw, 64px); letter-spacing: -.01em; }
+  .head .desc { margin-top: 18px; font-size: 15px; line-height: 2; color: var(--quiet); max-width: 36em; }
+
+  .stage { margin-bottom: 40px; }
+  .runner, .cover { position: relative; aspect-ratio: 16/9; background: #0b0a08; overflow: hidden; }
+  .cover img, .cover canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover.static .hint { position: absolute; right: 14px; bottom: 12px; color: rgba(238,233,225,.6); }
+  .run {
+    position: absolute; inset: 0; margin: auto;
+    width: max-content; height: max-content;
+    font-family: var(--mono); font-size: 13px; letter-spacing: .2em;
+    color: var(--or); background: rgba(11,10,8,.82);
+    border: 1px solid rgba(255,90,31,.6);
+    padding: 14px 34px; cursor: pointer;
+    transition: all .2s;
+  }
+  .run:hover { background: var(--or); color: #0b0a08; }
+  .cover .hint { position: absolute; left: 14px; bottom: 12px; color: rgba(238,233,225,.55); }
+  .runner :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .runner.running { aspect-ratio: auto; height: min(72vh, 720px); }
+  .runner :global(.bar) {
+    display: flex; justify-content: flex-end; gap: 14px;
+    padding: 8px 0;
+  }
+  .runner :global(.bar button) {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .14em;
+    background: none; border: 1px solid var(--faint); color: var(--quiet);
+    padding: 5px 12px; cursor: pointer;
+  }
+  .runner :global(.bar button:hover) { color: var(--or); border-color: var(--or); }
+  video, audio { width: 100%; display: block; }
+  .pending { padding: 60px 0; text-align: center; }
+
+  .note { margin-top: 48px; }
+  .note h2 { letter-spacing: .3em !important; font-size: 12px !important; font-weight: 400; margin-bottom: 22px; }
+  .prose { font-size: 15px; line-height: 2.1; color: rgba(28,26,22,.85); max-width: 38em; }
+  .prose :global(p) { margin-bottom: 1.2em; }
+  .note .annot a { color: var(--or); }
+</style>
+
+<script>
+  const runner = document.getElementById('runner');
+  if (runner) {
+    const src = runner.dataset.src!;
+    const cover = document.getElementById('cover')!;
+    document.getElementById('run-btn')!.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.allow = 'autoplay; fullscreen';
+      cover.replaceWith(iframe);
+      runner.classList.add('running');
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const fsBtn = document.createElement('button');
+      fsBtn.textContent = '全屏';
+      fsBtn.onclick = () => runner.requestFullscreen?.();
+      const openBtn = document.createElement('button');
+      openBtn.textContent = '新窗口打开';
+      openBtn.onclick = () => window.open(src, '_blank');
+      bar.append(openBtn, fsBtn);
+      runner.append(bar);
+    });
+  }
+</script>

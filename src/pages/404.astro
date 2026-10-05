@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+---
+<BaseLayout title="404">
+  <section class="nf">
+    <span class="annot">FIG.404 — MISSING DRAWING</span>
+    <h1>这张图纸<br />不存在。</h1>
+    <div class="rule" aria-hidden="true"></div>
+    <p class="lede">你找的页面可能已经被重绘、归档，或者从未被生成。</p>
+    <a class="back annot" href="/">← 回到首页</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { padding: 120px 0 100px; position: relative; }
+  .nf .annot { color: var(--or); letter-spacing: .3em !important; }
+  .nf h1 {
+    font-weight: 900;
+    font-size: clamp(48px, 8vw, 110px);
+    line-height: 1.1;
+    margin: 26px 0 0;
+  }
+  .rule {
+    width: min(420px, 80%);
+    height: 1px;
+    margin-top: 36px;
+    background: linear-gradient(90deg, var(--or), rgba(255,90,31,0));
+    animation: draw 1.2s cubic-bezier(.22,1,.36,1) .3s both;
+    transform-origin: left;
+  }
+  @keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .lede { margin-top: 24px; font-size: 15px; line-height: 2; color: var(--quiet); }
+  .back { display: inline-block; margin-top: 44px; text-decoration: none; }
+  .back:hover { color: var(--or); }
+</style>

@@ -1,0 +1,112 @@
+---
+/** PlotterLines — 全站背景：极细正交线生长绘制；画完后鼠标靠近的线条会被"点亮"（光标即绘图笔）。
+ *  transition:persist 使背景在页面转场间保持连续。 */
+interface Props { seed?: number; }
+const { seed = 139 } = Astro.props;
+---
+<canvas id="plotter-lines" data-seed={seed} aria-hidden="true" transition:persist></canvas>
+
+<style>
+  #plotter-lines {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const cv = document.getElementById('plotter-lines') as HTMLCanvasElement;
+  const ctx = cv.getContext('2d')!;
+  const DPR = Math.min(devicePixelRatio || 1, 2);
+
+  let s = Number(cv.dataset.seed || 139);
+  const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+
+  interface Line { h: boolean; p: number; o: number; len: number; sp: number; or: boolean; }
+  const lines: Line[] = [];
+  for (let i = 0; i < 90; i++) {
+    lines.push({
+      h: rnd() > .5,
+      p: rnd(), o: rnd(),
+      len: .06 + rnd() * .22,
+      sp: .12 + rnd() * .4,
+      or: rnd() > .86,
+    });
+  }
+
+  let W = 0, H = 0;
+  function size() {
+    W = innerWidth * DPR;
+    H = innerHeight * DPR;
+    cv.width = W;
+    cv.height = H;
+    render();
+  }
+
+  // 鼠标状态（CSS 像素 → 画布像素）
+  let mx = -9999, my = -9999;
+  const R = 150 * DPR; // 点亮半径
+
+  let t = 0;                 // 生长进度时间
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) t = 99;       // 动效降级：直接画完
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    for (const L of lines) {
+      const g = Math.min(1, t * L.sp);
+      if (g <= 0) continue;
+      const x = (L.h ? L.o * W : L.p * W);
+      const y = (L.h ? L.p * H : L.o * H);
+      const l = L.len * (L.h ? W : H) * g;
+      const x2 = L.h ? x + l : x;
+      const y2 = L.h ? y : y + l;
+
+      // 鼠标点到线段的最短距离
+      const segLen2 = (x2 - x) ** 2 + (y2 - y) ** 2 || 1;
+      let u = ((mx - x) * (x2 - x) + (my - y) * (y2 - y)) / segLen2;
+      u = Math.max(0, Math.min(1, u));
+      const dx = mx - (x + u * (x2 - x));
+      const dy = my - (y + u * (y2 - y));
+      const d = Math.hypot(dx, dy);
+      const boost = Math.max(0, 1 - d / R); // 0..1
+
+      const inkA = .09 + boost * .38;
+      const orA = .28 + boost * .6;
+      ctx.strokeStyle = (L.or || boost > .35)
+        ? `rgba(255,90,31,${Math.max(L.or ? orA : 0, boost > .35 ? orA : 0)})`
+        : `rgba(28,26,22,${inkA})`;
+      ctx.lineWidth = (L.or || boost > .35 ? 1.4 : 1) * DPR * (1 + boost * .8);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+  }
+
+  // 生长动画
+  function grow() {
+    t += .016;
+    render();
+    if (lines.some(L => t * L.sp < 1)) requestAnimationFrame(grow);
+  }
+
+  // 鼠标移动 → 重绘（rAF 节流）
+  let queued = false;
+  addEventListener('mousemove', e => {
+    mx = e.clientX * DPR;
+    my = e.clientY * DPR;
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(() => { queued = false; render(); });
+    }
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => { mx = my = -9999; render(); });
+
+  addEventListener('resize', size);
+  size();
+  if (!reduced) requestAnimationFrame(grow);
+</script>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+---
+<BaseLayout title="关于">
+  <article class="about">
+    <header data-reveal>
+      <span class="annot">FIG.04 — ABOUT</span>
+      <h1>violin</h1>
+      <p class="tagline">品味是知识的导数。</p>
+    </header>
+
+    <section data-reveal>
+      <h2 class="annot">01 / 我是谁</h2>
+      <p>violin，自由职业者，现居广西防城港。内容品牌「言上文化 · Beyond-Motion」主理人，自称「AI 时代的追问者」——不做教程，不讲道理。所有内容从一个真实的困惑开始，带着读者一起追问，直到发现「没想到的问题」。</p>
+    </section>
+
+    <section data-reveal>
+      <h2 class="annot">02 / 从影视到 AI</h2>
+      <p>在影视行业做了十年，练就的本事是用场景和故事讲清楚复杂的事。中年转型，经历过工作室的关停与重建，最终在 AI 这里找到了新的生产方式：我不懂代码，但在 AI 的协作下，想法可以直接变成产品、影像和音乐。</p>
+      <p>这段经历本身，就是我最重要的作品。</p>
+    </section>
+
+    <section data-reveal>
+      <h2 class="annot">03 / 方法论</h2>
+      <ul>
+        <li><b>追问驱动</b>——先有一个真实的困惑，再有一件作品。问题是创作的起点，不是障碍。</li>
+        <li><b>提问力即生产力</b>——提示词工程不是技巧，是一种思维方式。</li>
+        <li><b>过程即作品</b>——记录过程，不只是记录结果。这个网站公开的从来不只是成品，还有源码和思路。</li>
+        <li><b>品味是知识的导数</b>——输入的积累，决定判断的斜率。</li>
+      </ul>
+    </section>
+
+    <section data-reveal>
+      <h2 class="annot">04 / 正在做的事</h2>
+      <ul>
+        <li><b>代码生成影像</b>——AI 模型辅助下的实时渲染与渲染成片实验，即本站的影像作品</li>
+        <li><b>Music Vault</b>——AI 音乐实验与发行管线 <a href="https://music.1986318.xyz" target="_blank" rel="noopener">music.1986318.xyz</a></li>
+        <li><b>追问者公众号</b>——以内容建立连接，探索 AI 时代个体的可能性</li>
+      </ul>
+    </section>
+
+    <section data-reveal>
+      <h2 class="annot">05 / 联系</h2>
+      <ul>
+        <li><b>B 站</b>——<a href="https://space.bilibili.com/19258410" target="_blank" rel="noopener">space.bilibili.com/19258410</a></li>
+        <li class="placeholder">邮箱 / GitHub / 公众号 —— 待补充</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about { max-width: 760px; margin: 0 auto; }
+  header { padding: 80px 0 60px; border-bottom: 1px solid var(--faint); }
+  header h1 {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(48px, 7vw, 88px);
+    letter-spacing: .02em;
+    margin: 18px 0 12px;
+  }
+  .tagline { font-family: var(--serif); font-size: 19px; color: var(--or); letter-spacing: .06em; }
+
+  section { padding: 44px 0; border-bottom: 1px solid var(--faint); }
+  section:last-child { border-bottom: 0; }
+  section h2 { letter-spacing: .3em !important; font-size: 12px !important; font-weight: 400; margin-bottom: 22px; color: var(--or) !important; }
+  section p {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 2.2;
+    color: rgba(28,26,22,.88);
+    margin-bottom: 1.2em;
+  }
+  section p:last-child { margin-bottom: 0; }
+  section ul { list-style: none; }
+  section li {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 2.1;
+    color: rgba(28,26,22,.88);
+    padding: 14px 0 14px 24px;
+    border-bottom: 1px dashed var(--faint);
+    position: relative;
+  }
+  section li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 1.55em;
+    width: 12px; height: 1px;
+    background: var(--or);
+  }
+  section li b { font-weight: 900; }
+  section a { color: var(--or); text-decoration: none; }
+  section a:hover { text-decoration: underline; }
+  .placeholder { color: var(--quiet) !important; font-family: var(--mono) !important; font-size: 12px !important; letter-spacing: .1em; border-bottom: 0 !important; }
+  .placeholder::before { display: none; }
+</style>

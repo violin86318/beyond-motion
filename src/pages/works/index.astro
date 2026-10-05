@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import WorkCard from '../../components/WorkCard.astro';
+
+const works = (await getCollection('works'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const FILTERS = [
+  { key: 'all', label: '全部' },
+  { key: 'live', label: '影像' },
+  { key: 'image', label: '图像' },
+  { key: 'music', label: '音乐' },
+  { key: 'video', label: '成片' },
+];
+---
+<BaseLayout title="作品库">
+  <section class="head" data-reveal>
+    <span class="annot">FIG.02 — CATALOGUE</span>
+    <h1>作品库</h1>
+    <p class="annot">{works.length} 件 · 持续生长中</p>
+  </section>
+
+  <div class="filters annot" id="filters" data-reveal>
+    {FILTERS.map(f => (
+      <button data-filter={f.key} class:list={[{ on: f.key === 'all' }]}>{f.label}</button>
+    ))}
+  </div>
+
+  <div class="works" id="works-list">
+    {works.map((w, i) => <WorkCard no={String(i + 1).padStart(3, '0')} work={w} delay={`${i * .06}s`} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  .head { padding: 72px 0 40px; position: relative; }
+  .head h1 { font-weight: 900; font-size: clamp(40px, 6vw, 72px); margin: 14px 0 10px; }
+  .filters { display: flex; gap: 10px; padding-bottom: 24px; flex-wrap: wrap; }
+  .filters button {
+    font: inherit;
+    letter-spacing: inherit;
+    background: none;
+    border: 1px solid var(--faint);
+    color: var(--quiet);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filters button:hover { border-color: var(--or); color: var(--or); }
+  .filters button.on { border-color: var(--or); color: var(--or); background: rgba(255, 90, 31, .06); }
+  .works { border-top: 1px solid var(--faint); }
+  .works :global(.work.hide) { display: none; }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('#filters button');
+  const items = document.querySelectorAll<HTMLElement>('#works-list .work');
+
+  function apply(key: string) {
+    btns.forEach(b => b.classList.toggle('on', b.dataset.filter === key));
+    items.forEach(el => {
+      el.classList.toggle('hide', key !== 'all' && el.dataset.type !== key);
+    });
+  }
+  btns.forEach(b => b.addEventListener('click', () => {
+    const key = b.dataset.filter!;
+    history.replaceState(null, '', key === 'all' ? '/works' : `#${key}`);
+    apply(key);
+  }));
+  const hash = location.hash.slice(1);
+  if (hash && [...btns].some(b => b.dataset.filter === hash)) apply(hash);
+</script>

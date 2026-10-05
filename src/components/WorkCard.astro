@@ -1,0 +1,97 @@
+---
+/** WorkCard — 作品索引行：编号 / 缩略图 / 标题+tech / 类型标签。 */
+import type { CollectionEntry } from 'astro:content';
+import GenerativeThumb from './GenerativeThumb.astro';
+
+interface Props { no: string; work: CollectionEntry<'works'>; delay?: string; }
+const { no, work, delay } = Astro.props;
+const { title, type, date, description, tech } = work.data;
+
+const TAG: Record<string, { label: string; live?: boolean }> = {
+  live: { label: 'RUNS LIVE', live: true },
+  video: { label: 'VIDEO' },
+  image: { label: 'IMAGE' },
+  music: { label: 'MUSIC' },
+};
+const tag = TAG[type];
+// 由 id 派生稳定 seed
+const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000, 7);
+---
+<a class="work" href={`/works/${work.id}`} data-type={type} data-reveal style={delay ? `--rd:${delay}` : undefined}>
+  <span class="no annot">{no}</span>
+  {work.data.poster
+    ? <img class="thumb" src={work.data.poster} alt={title} width="480" height="288" />
+    : <GenerativeThumb seed={seed} class="thumb" />}
+  <span class="meta">
+    <b>{title}<span class="arrow" aria-hidden="true">→</span></b>
+    <small class="annot">{tech.join(' · ')} · {date}</small>
+    <span class="desc">{description}</span>
+  </span>
+  <span class:list={['tag', 'annot', { live: tag.live }]}>{tag.label}</span>
+</a>
+
+<style>
+  .work {
+    display: grid;
+    grid-template-columns: 56px 168px 1fr auto;
+    gap: 28px;
+    align-items: center;
+    padding: 22px 0 22px 18px;
+    border-bottom: 1px solid var(--faint);
+    text-decoration: none;
+    position: relative;
+    transition: background .25s;
+  }
+  /* hover：左侧橙线扫入 */
+  .work::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    width: 2px; height: 100%;
+    background: var(--or);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+  }
+  .work:hover::before { transform: scaleY(1); }
+  .work:hover { background: rgba(255, 90, 31, .045); }
+  .thumb {
+    width: 168px;
+    height: auto;
+    display: block;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+  }
+  .work:hover .thumb { transform: translateX(4px); }
+  .meta { display: grid; gap: 6px; }
+  .meta b { font-size: 19px; font-weight: 700; display: flex; align-items: baseline; gap: 10px; }
+  .meta b .arrow {
+    color: var(--or);
+    font-weight: 400;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity .3s, transform .35s cubic-bezier(.22, 1, .36, 1);
+  }
+  .work:hover .arrow { opacity: 1; transform: none; }
+  .meta .desc {
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: var(--quiet);
+    max-width: 40em;
+  }
+  .tag {
+    color: var(--blue);
+    border: 1px solid rgba(58, 90, 140, .4);
+    padding: 4px 10px;
+    white-space: nowrap;
+    transition: all .25s;
+  }
+  .tag.live { color: var(--or); border-color: rgba(255, 90, 31, .45); }
+  .work:hover .tag.live { background: var(--or); color: var(--paper); }
+
+  @media (max-width: 720px) {
+    .work { grid-template-columns: 40px 1fr; gap: 12px; padding-left: 12px; }
+    .thumb { width: 100%; grid-column: 2; }
+    .meta { grid-column: 2; }
+    .tag { position: absolute; top: 22px; right: 0; }
+  }
+</style>
