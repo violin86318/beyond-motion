@@ -5,6 +5,7 @@ const works = defineCollection({
   loader: glob({ pattern: '*/index.md', base: './src/content/works' }),
   schema: z.object({
     title: z.string(),
+    draft: z.boolean().default(false),
     type: z.enum(['live', 'video', 'image', 'music']),
     date: z.string(),
     description: z.string(),
@@ -20,6 +21,7 @@ const notes = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
+    draft: z.boolean().default(false),
     date: z.string(),
     kind: z.enum(['log', 'piece']),
     description: z.string(),

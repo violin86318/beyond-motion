@@ -1,4 +1,5 @@
 ---
+draft: true
 title: 信号练习 · SIGNAL STUDY
 type: image
 date: "2026-08"

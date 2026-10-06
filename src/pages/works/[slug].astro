@@ -7,7 +7,7 @@ import BlueprintSpec from '../../components/BlueprintSpec.astro';
 import GenerativeThumb from '../../components/GenerativeThumb.astro';
 
 export async function getStaticPaths() {
-  const works = (await getCollection('works'))
+  const works = (await getCollection('works', ({data}) => !data.draft))
     .sort((a, b) => b.data.date.localeCompare(a.data.date));
   return works.map((work, i) => ({
     params: { slug: work.id },
@@ -45,7 +45,7 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
 
     <section class="stage" data-reveal>
       {type === 'live' && liveEntry && (
-        <div class="runner" id="runner" data-src={liveEntry}>
+        <div class="runner" id="runner" data-src={liveEntry} data-title={title}>
           <div class="cover" id="cover">
             {poster ? <img src={poster} alt={title} /> : <GenerativeThumb seed={seed} width={960} height={576} />}
             <button class="run" id="run-btn">▶ 运行作品</button>
@@ -58,7 +58,8 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
       {type === 'video' && videoFile && (
         <video controls preload="metadata" poster={poster} src={videoFile}></video>
       )}
-      {type === 'video' && !videoFile && (
+      {type === 'video' && !videoFile && url && (<a class="button" href={url} target="_blank" rel="noopener noreferrer">观看完整视频 ↗</a>)}
+      {type === 'video' && !videoFile && !url && (
         <div class="cover static">
           {poster ? <img src={poster} alt={title} /> : <GenerativeThumb seed={seed} width={960} height={576} />}
           <span class="annot hint">成片整理中，即将上线</span>
@@ -75,6 +76,7 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
       {type === 'music' && !audioFile && <p class="annot pending">音频整理中，即将上线。</p>}
     </section>
 
+    {liveEntry && <p class="annot"><a href={liveEntry} target="_blank" rel="noopener noreferrer">独立窗口打开作品 ↗</a> · 若内嵌播放未加载，可使用此入口。</p>}
     <BlueprintSpec tech={tech} title={title} date={date} medium={MEDIUM[type]} />
 
     <section class="note" data-reveal>
@@ -143,19 +145,11 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
     document.getElementById('run-btn')!.addEventListener('click', () => {
       const iframe = document.createElement('iframe');
       iframe.src = src;
+      iframe.title = `${runner.dataset.title} · 实时视听作品`;
       iframe.allow = 'autoplay; fullscreen';
       cover.replaceWith(iframe);
       runner.classList.add('running');
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      const fsBtn = document.createElement('button');
-      fsBtn.textContent = '全屏';
-      fsBtn.onclick = () => runner.requestFullscreen?.();
-      const openBtn = document.createElement('button');
-      openBtn.textContent = '新窗口打开';
-      openBtn.onclick = () => window.open(src, '_blank');
-      bar.append(openBtn, fsBtn);
-      runner.append(bar);
+
     });
   }
 </script>

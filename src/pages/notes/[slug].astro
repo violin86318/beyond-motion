@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const notes = (await getCollection('notes'))
+  const notes = (await getCollection('notes', ({data}) => !data.draft))
     .sort((a, b) => b.data.date.localeCompare(a.data.date));
   return notes.map((note, i) => ({
     params: { slug: note.id },
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 const { note, no } = Astro.props;
 const { title, date, kind } = note.data;
 const { Content } = await render(note);
-const KIND: Record<string, string> = { log: '手记', piece: '作品文' };
+const KIND: Record<string, string> = { log: '手记', piece: '文章' };
 ---
 <BaseLayout title={title} description={note.data.description}>
   <article class="note">

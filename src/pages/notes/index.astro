@@ -2,13 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 
-const notes = (await getCollection('notes'))
+const notes = (await getCollection('notes', ({data}) => !data.draft))
   .sort((a, b) => b.data.date.localeCompare(a.data.date));
 const KIND: Record<string, string> = { log: '手记', piece: '文章' };
 ---
-<BaseLayout title="手记">
+<BaseLayout title="文章与手记">
   <section class="head" data-reveal>
-    <span class="annot">VOL.01 — 私人档案</span>
+    <span class="annot">WORDS / 文章与手记</span>
     <h1>追问者的手记</h1>
     <p class="annot">{notes.length} 篇 · 学习笔记与 AI 协作写作的成品</p>
   </section>

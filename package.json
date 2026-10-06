@@ -6,7 +6,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "build:studios": "node scripts/build-studios.mjs",
+    "build:all": "npm run build && npm run build:studios",
+    "deploy:main": "wrangler pages deploy dist --project-name=beyond-motion --branch=main",
+    "deploy:wedding": "wrangler pages deploy .studio-dist/wedding --project-name=shiliu-wedding --branch=main",
+    "deploy:portrait": "wrangler pages deploy .studio-dist/portrait --project-name=shiliu-portrait --branch=main",
+    "check": "node scripts/check-release.mjs",
+    "deploy:all": "bash scripts/deploy-all.sh"
   },
   "dependencies": {
     "astro": "^5.13.0"
