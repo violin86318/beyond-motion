@@ -4,7 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 
 const notes = (await getCollection('notes'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date));
-const KIND: Record<string, string> = { log: '手记', piece: '作品文' };
+const KIND: Record<string, string> = { log: '手记', piece: '文章' };
 ---
 <BaseLayout title="手记">
   <section class="head" data-reveal>
