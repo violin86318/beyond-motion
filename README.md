@@ -66,12 +66,13 @@ tech: [创作方法]
 draft: true
 url: https://example.com # 网页作品或外部视频地址，可选
 poster: /w/example/poster.webp
+orientation: landscape # landscape 横屏 / portrait 竖屏
 ---
 
 创作手记。
 ```
 
-图片、音频等放到 `public/w/<slug>/`。网页作品可用外部 `url` 或本地 `index.html`；视频可用外部 `url` 或本地 `video.mp4`；音乐可用本地 `audio.mp3`。只在作品可用后移除草稿状态。首页《定影》为人工编排的编辑精选，更新时修改 `src/pages/index.astro`。
+图片、音频等放到 `public/w/<slug>/`。网页作品可用外部 `url` 或本地 `index.html`；视频可用外部 `url` 或本地 `video.mp4`；音乐可用本地 `audio.mp3`。只在作品可用后移除草稿状态。首页《定影》主视觉为人工编排；其他 `featured: true` 的作品自动进入「继续看片」区域。
 
 ## 石榴精选版
 

@@ -1,14 +1,14 @@
 ---
 /** BlueprintSpec — 048 变奏：作品技术栈的工程图式标注块。 */
-interface Props { tech: string[]; title: string; date: string; medium: string; }
-const { tech, title, date, medium } = Astro.props;
+interface Props { tech: string[]; title: string; date: string; medium: string; format?: string; }
+const { tech, title, date, medium, format = '16:9' } = Astro.props;
 ---
 <figure class="sheet">
   <figcaption class="annot">TECHNICAL SHEET — 技术图纸</figcaption>
   <div class="inner">
     <div class="row" style={`--i:0`}>
       <span class="leader"></span>
-      <span class="callout annot">00 / CODE AS WORK — 全部由代码生成</span>
+      <span class="callout annot">00 / CREATION & PRESENTATION — 制作与呈现</span>
     </div>
     {tech.map((t, i) => (
       <div class="row" style={`--i:${i + 1}`}>
@@ -19,7 +19,7 @@ const { tech, title, date, medium } = Astro.props;
   </div>
   <div class="titleblock">
     <div>TITLE<br /><b>{title}</b></div>
-    <div>SCALE<br /><b>1:1</b></div>
+    <div>FORMAT<br /><b>{format}</b></div>
     <div>MEDIUM<br /><b>{medium}</b></div>
     <div>DATE<br /><b>{date}</b></div>
   </div>

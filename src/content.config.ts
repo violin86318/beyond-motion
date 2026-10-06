@@ -7,6 +7,7 @@ const works = defineCollection({
     title: z.string(),
     draft: z.boolean().default(false),
     type: z.enum(['live', 'video', 'image', 'music']),
+    orientation: z.enum(['landscape', 'portrait']).default('landscape'),
     date: z.string(),
     description: z.string(),
     tech: z.array(z.string()),

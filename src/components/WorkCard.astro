@@ -58,6 +58,8 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
   .thumb {
     width: 168px;
     height: auto;
+    aspect-ratio: 16/10;
+    object-fit: cover;
     display: block;
     transition: transform .5s cubic-bezier(.22, 1, .36, 1);
   }

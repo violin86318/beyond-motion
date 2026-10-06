@@ -1,7 +1,7 @@
 ---
 import '../styles/tokens.css';
-interface Props { title: string; description?: string; }
-const { title, description = 'violin 的创作现场：影像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
+interface Props { title: string; description?: string; image?: string; }
+const { title, image = '/w/dingying-fix/poster.jpg', description = 'violin 的创作现场：影像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
 const year = new Date().getFullYear();
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const nav = [['/works','作品'],['/notes','文章'],['/music','音乐'],['/studio','石榴工作室'],['/about','关于']];
@@ -12,7 +12,7 @@ const nav = [['/works','作品'],['/notes','文章'],['/music','音乐'],['/stud
 <link rel="canonical" href={canonical} /><meta property="og:url" content={canonical} />
 <meta property="og:title" content={`${title} — violin · Beyond-Motion`} /><meta property="og:description" content={description} />
 <meta property="og:type" content={Astro.url.pathname.startsWith('/notes/') ? 'article' : 'website'} />
-<meta property="og:locale" content="zh_CN" /><meta property="og:image" content={new URL('/w/dingying-fix/poster.jpg',Astro.site)} />
+<meta property="og:locale" content="zh_CN" /><meta property="og:image" content={new URL(image,Astro.site)} />
 <meta name="twitter:card" content="summary_large_image" /><meta name="theme-color" content="#f4f1e8" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" /><link rel="alternate" type="application/rss+xml" title="violin 的文章" href="/rss.xml" />
 </head><body><a href="#main" class="skip">跳到正文</a><div class="shell">
