@@ -65,7 +65,10 @@ description: "作品介绍"
 tech: [创作方法]
 draft: true
 url: https://example.com # 网页作品或外部视频地址，可选
-poster: /w/example/poster.webp
+poster: /w/example/cover.jpg
+posterAlt: "主题封面的画面说明"
+stagePoster: /w/example/cover-portrait.jpg # 可选，竖屏播放区域使用
+duration: "03:14" # 可选
 orientation: landscape # landscape 横屏 / portrait 竖屏
 ---
 
@@ -73,6 +76,26 @@ orientation: landscape # landscape 横屏 / portrait 竖屏
 ```
 
 图片、音频等放到 `public/w/<slug>/`。网页作品可用外部 `url` 或本地 `index.html`；视频可用外部 `url` 或本地 `video.mp4`；音乐可用本地 `audio.mp3`。只在作品可用后移除草稿状态。首页《定影》主视觉为人工编排；其他 `featured: true` 的作品自动进入「继续看片」区域。
+
+封面采用独立的主题构图，不从音乐时间线任意截帧。首页与作品列表统一用 16:9；竖屏作品另用 `stagePoster` 的 9:16 构图。播放按钮在封面之外，加载前后保留画面比例。「返回封面」会移除 iframe 并停止内嵌作品。分享图使用同一横版 JPEG。
+
+四张封面的可编辑构图在 `scripts/build-work-covers.mjs`；运行 `node scripts/build-work-covers.mjs` 会重新生成 `public/w/` 中的 SVG 与 JPEG，需要本机有中文字体。页面上这些图是标题封面，不是 MV 截帧。
+
+### 原作品页的封面
+
+`player-sites/<slug>/index.html` 保存四个作品页的新首屏与播放控制；`player-sites/title-cover.css` 共用封面样式。原 MV 引擎、音频与影像继续使用原工程中的公开文件，部署时按清单复制，不复制任何父目录。
+
+本机 `.local-deploy/player-sources.json` 保存原站点目录映射（不提交 Git）。新机器需要自行创建同结构 JSON，四个键为 `dingying-fix`、`dingying-lanshai`、`tuigejian-mv`、`lingdian-mv`，值为各原站点目录。
+
+```sh
+python3 scripts/build-player-sites.py .local-deploy/player-sources.json
+wrangler pages deploy .local-deploy/players/dingying-fix --project-name=dingying-mv --branch=main
+wrangler pages deploy .local-deploy/players/dingying-lanshai --project-name=dingying-lanshai --branch=main
+wrangler pages deploy .local-deploy/players/tuigejian-mv --project-name=tuigejian-mv --branch=main
+wrangler pages deploy .local-deploy/players/lingdian-mv --project-name=lingdian-mv --branch=main
+```
+
+原作品页独立打开时显示主题封面；门户点击播放时用 `autoplay=1` 请求从头播放。如果浏览器限制声音，保留封面按钮供再次点击。蓝晒相册字体随站点发布，避免依赖在线字体请求。
 
 ## 石榴精选版
 

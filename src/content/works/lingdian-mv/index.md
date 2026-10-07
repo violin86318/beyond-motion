@@ -10,7 +10,10 @@ tech:
   - Canvas 图形与歌词叠层
   - 音画时间同步
 featured: true
-poster: /w/lingdian-mv/poster.webp
+poster: /w/lingdian-mv/cover.jpg
+stagePoster: /w/lingdian-mv/cover-portrait.jpg
+posterAlt: 零点前三十秒主题封面：城市灯火与零点倒计时
+duration: "03:14"
 ---
 
 这支作品把实拍视频作为底层，再叠加代码绘制的倒计时、图形与歌词。影像提供具体的瞬间，图形把时间和节奏放到画面里。

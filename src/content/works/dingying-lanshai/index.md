@@ -9,7 +9,9 @@ tech:
   - 蓝晒影像素材
   - 音乐与歌词同步
 featured: true
-poster: /w/dingying-lanshai/poster.webp
+poster: /w/dingying-lanshai/cover.jpg
+posterAlt: 定影蓝晒相册主题封面：普鲁士蓝上的植物日光印痕
+duration: "04:16"
 ---
 
 同一首《定影》，换一种留下记忆的方式。胶片之外，这一版采用蓝晒相册的视觉语言：普鲁士蓝、纸面的印痕，以及随音乐展开的影像与文字。

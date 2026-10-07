@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="零点前三十秒"><meta property="og:image" content="https://beyondmotion.net/w/lingdian-mv/cover.jpg">
+<title>零点前三十秒 · MV</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="title-cover.css">
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;
+    font-family:-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif;color:#E8ECEF}
+  #stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;
+    transform-origin:center center;transform:translate(-50%,-50%) scale(var(--s,0.3));
+    background:#0B0C10;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.6)}
+  #stage video,#stage canvas{position:absolute;left:0;top:0;width:1080px;height:1920px;display:block}
+  #stage canvas{z-index:2;pointer-events:none}
+  #big{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;
+    width:132px;height:132px;border-radius:50%;border:2px solid #FFB23F;background:rgba(11,12,16,.8);
+    color:#FFB23F;font-size:46px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    padding-left:9px;box-sizing:border-box;transition:opacity .25s}
+  #big.hide{opacity:0;pointer-events:none}
+  #bar{position:absolute;left:0;right:0;bottom:0;z-index:30;height:52px;display:flex;align-items:center;gap:12px;
+    padding:0 16px;box-sizing:border-box;background:rgba(11,12,16,.82);-webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);border-top:1px solid rgba(232,236,239,.14);font-size:13px}
+  #bar button{background:none;border:1px solid rgba(232,236,239,.35);color:#E8ECEF;border-radius:6px;
+    width:42px;height:30px;cursor:pointer;font-size:15px}
+  #seek{flex:1;accent-color:#FFB23F}
+  #tc{font-family:"SF Mono",Menlo,monospace;font-size:12px;min-width:120px;text-align:right}
+  #hint{position:absolute;left:50%;bottom:60px;transform:translateX(-50%);z-index:30;font-size:12px;
+    color:rgba(232,236,239,.55);white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="stage">
+  <video id="v" src="video.mp4" muted playsinline preload="auto"></video>
+  <canvas id="c" width="1080" height="1920"></canvas>
+</div>
+<div id="title-screen" class="title-screen portrait"><img class="title-art" src="cover-portrait.jpg" alt="零点前三十秒：城市灯火与倒计时"/><div class="title-actions"><button id="title-play" type="button">▶ 开始播放</button><p class="title-hint" id="title-status" role="status">含声音 · 建议戴耳机</p></div></div>
+<button id="big" aria-label="开始播放">▶</button>
+<div id="bar">
+  <button id="pp">▶</button>
+  <input id="seek" type="range" min="0" max="194.49" step="0.01" value="0">
+  <span id="tc">00:00 / 03:14</span>
+  <button id="mute" title="静音">🔊</button>
+  <button id="fs" title="全屏">⛶</button>
+</div>
+<div id="hint">底层实拍 + 代码图形层 · 空格 播放/暂停 · ← → 快退/快进</div>
+
+<script src="env.js"></script>
+<script src="gfx.js"></script>
+<script>
+(function(){
+  var v=document.getElementById('v'), au=null, stg=document.getElementById('stage');
+  var pp=document.getElementById('pp'), seek=document.getElementById('seek'), tc=document.getElementById('tc'),
+      big=document.getElementById('big'), fs=document.getElementById('fs'), mute=document.getElementById('mute');
+  var END=194.49, dragging=false, started=false;
+  var au=new Audio(); au.preload='auto'; au.src='song.mp3';
+
+  function fit(){var s=Math.min(innerWidth/1080,innerHeight/1920);
+    stg.style.setProperty('--s',String(s)); }
+  addEventListener('resize',fit); fit();
+
+  function fmt(s){s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+
+  function start(){
+    if(started)return;
+    au.currentTime=0;v.currentTime=0;
+    au.play().then(function(){started=true;v.play().catch(function(){});big.classList.add('hide');document.getElementById('title-screen').hidden=true;}).catch(function(){started=false;pp.textContent='▶';document.getElementById('title-status').textContent='请点击开始播放，允许声音播放。';});
+  }
+  function toggle(){
+    if(!started){start();return;}
+    if(au.paused){au.play().catch(function(){});v.play().catch(function(){});}
+    else{au.pause();v.pause();}
+  }
+  pp.onclick=toggle; big.onclick=start; document.getElementById('title-play').onclick=start;
+  fs.onclick=function(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+  mute.onclick=function(){au.muted=!au.muted;mute.textContent=au.muted?'🔇':'🔊'};
+  seek.addEventListener('input',function(){dragging=true;var t=+seek.value;au.currentTime=t;v.currentTime=t;renderAt(t);});
+  seek.addEventListener('change',function(){dragging=false});
+  document.addEventListener('keydown',function(e){
+    if(e.code==='Space'){e.preventDefault();toggle()}
+    else if(e.key==='ArrowLeft'){au.currentTime=Math.max(0,au.currentTime-5);v.currentTime=au.currentTime;}
+    else if(e.key==='ArrowRight'){au.currentTime=Math.min(END,au.currentTime+5);v.currentTime=au.currentTime;}
+  });
+  au.addEventListener('loadedmetadata',function(){if(isFinite(au.duration)&&au.duration>0){END=au.duration;seek.max=au.duration;}});
+  au.addEventListener('error',function(){ /* fall back to video clock */ });
+
+  if(window.ENV) renderAt(0);
+
+  function loop(){
+    var t = started ? (au.currentTime||0) : 0;
+    if(t>END){t=END;}
+    if(started){
+      // keep the video layer in sync with the audio clock
+      if(v.readyState>=2){
+        var d=t-v.currentTime;
+        if(Math.abs(d)>0.10){try{v.currentTime=t;}catch(e){}}
+        if(au.paused){ if(!v.paused)v.pause(); } else { if(v.paused)v.play().catch(function(){}); }
+      }
+      renderAt(Math.min(t,END));
+    } else {
+      renderAt(0);
+    }
+    pp.textContent=(started&&!au.paused)?'❚❚':'▶';
+    if(!dragging)seek.value=t;
+    tc.textContent=fmt(t)+' / '+fmt(END);
+    requestAnimationFrame(loop);
+  }
+  loop();
+  if(new URLSearchParams(location.search).get('autoplay')==='1') start();
+  au.addEventListener('ended',function(){started=false;v.pause();document.getElementById('title-screen').hidden=false;});
+})();
+</script>
+</body>
+</html>

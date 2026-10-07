@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="退格键"><meta property="og:image" content="https://beyondmotion.net/w/tuigejian-mv/cover.jpg">
+<title>退格键 · MV</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="title-cover.css">
+<style>
+  @font-face{font-family:Plex;src:url(fonts/IBMPlexMono-Regular.ttf);font-weight:400}
+  @font-face{font-family:Plex;src:url(fonts/IBMPlexMono-Medium.ttf);font-weight:500}
+  @font-face{font-family:Plex;src:url(fonts/IBMPlexMono-SemiBold.ttf);font-weight:600}
+  @font-face{font-family:Kai;src:url(fonts/Kai.ttf)}
+  html,body{margin:0;height:100%;background:#0A0A0B;overflow:hidden;
+    font-family:-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif;color:#EEE9DF}
+  /* 应用会把两块 1920x1080 画布追加到 body：这里统一居中缩放 */
+  body>canvas{position:absolute!important;left:50%!important;top:50%!important;
+    width:1920px!important;height:1080px!important;transform-origin:center center;
+    transform:translate(-50%,-50%) scale(var(--s,0.5))}
+  #big{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;
+    width:120px;height:120px;border-radius:50%;border:2px solid #FF4D12;background:rgba(10,10,12,.8);
+    color:#FF4D12;font-size:42px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    padding-left:9px;box-sizing:border-box;transition:opacity .25s}
+  #big.hide{opacity:0;pointer-events:none;cursor:default}
+  #bar{position:fixed;left:0;right:0;bottom:0;z-index:30;height:52px;display:flex;align-items:center;gap:12px;
+    padding:0 16px;box-sizing:border-box;background:rgba(10,10,12,.82);-webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);border-top:1px solid rgba(238,233,223,.14);font-size:13px}
+  #bar button{background:none;border:1px solid rgba(238,233,223,.35);color:#EEE9DF;border-radius:6px;
+    width:42px;height:30px;cursor:pointer;font-size:15px}
+  #seek{flex:1;accent-color:#FF4D12}
+  #tc{font-family:Plex,Menlo,monospace;font-size:12px;min-width:130px;text-align:right}
+  #hint{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);z-index:30;font-size:12px;
+    color:rgba(238,233,223,.5);white-space:nowrap}
+</style>
+</head>
+<body>
+<div id="title-screen" class="title-screen"><img class="title-art" src="cover.jpg" alt="退格键：黑橙色的退格按键"/><div class="title-actions"><button id="title-play" type="button">▶ 开始播放</button><p class="title-hint" id="title-status" role="status">含声音 · 建议戴耳机</p></div></div>
+<button id="big" aria-label="开始播放">▶</button>
+<div id="bar">
+  <button id="pp">▶</button>
+  <input id="seek" type="range" min="0" max="178.236" step="0.01" value="0">
+  <span id="tc">00:00 / 02:58</span>
+  <button id="mute" title="静音">🔊</button>
+  <button id="fs" title="全屏">⛶</button>
+</div>
+<div id="hint">WebGL 代码 MV · 空格 播放/暂停 · ← → 快退/快进</div>
+<script src="app.js"></script>
+<script>
+(function(){
+  var pp=document.getElementById('pp'),seek=document.getElementById('seek'),tc=document.getElementById('tc'),
+      big=document.getElementById('big'),fs=document.getElementById('fs'),mute=document.getElementById('mute');
+  var END=178.236, dragging=false, started=false, ready=false, pendingStart=false;
+  var au=new Audio(); au.preload='auto'; au.src='audio.mp3';
+
+  function fit(){var s=Math.min(innerWidth/1920,innerHeight/1080);
+    document.documentElement.style.setProperty('--s',String(s));}
+  addEventListener('resize',fit); fit();
+
+  function fmt(s){s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+  function paint(t){ if(window.renderAt) window.renderAt(Math.max(0,Math.min(t,END))); }
+
+  function start(){ if(!ready){pendingStart=true;document.getElementById('title-status').textContent='画面准备中…';return;} pendingStart=false; au.currentTime=0; paint(0); au.play().then(function(){started=true;document.getElementById('title-screen').hidden=true;big.classList.add('hide');}).catch(function(){started=false;document.getElementById('title-screen').hidden=false;document.getElementById('title-status').textContent='请点击开始播放，允许声音播放。';}); }
+  function toggle(){ if(!ready)return; if(!started){start();return;} au.paused?au.play().catch(function(){}):au.pause(); }
+  pp.onclick=toggle; big.onclick=start; document.getElementById('title-play').onclick=start;
+  fs.onclick=function(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+  mute.onclick=function(){au.muted=!au.muted;mute.textContent=au.muted?'🔇':'🔊'};
+  seek.addEventListener('input',function(){dragging=true;var t=+seek.value;au.currentTime=t;paint(t);});
+  seek.addEventListener('change',function(){dragging=false});
+  document.addEventListener('keydown',function(e){
+    if(e.code==='Space'){e.preventDefault();toggle()}
+    else if(e.key==='ArrowLeft')au.currentTime=Math.max(0,au.currentTime-5);
+    else if(e.key==='ArrowRight')au.currentTime=Math.min(END,au.currentTime+5);
+  });
+  au.addEventListener('loadedmetadata',function(){if(isFinite(au.duration)&&au.duration>0){END=Math.min(au.duration,178.236);seek.max=END;}});
+
+  function loop(){
+    if(window.READY && window.renderAt){
+      if(!ready){ready=true; paint(0); if(new URLSearchParams(location.search).get('autoplay')==='1')pendingStart=true;}
+      if(pendingStart && !started){ start(); }
+      var t = started ? (au.currentTime||0) : 0;
+      if(!dragging) seek.value=t;
+      tc.textContent=fmt(t)+' / '+fmt(END);
+      if(started){ if(au.ended){started=false;au.currentTime=0;big.classList.remove('hide');document.getElementById('title-screen').hidden=false;paint(0);} else paint(t); }
+      pp.textContent=(started&&!au.paused)?'❚❚':'▶';
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>

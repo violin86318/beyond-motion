@@ -15,6 +15,9 @@ const works = defineCollection({
     url: z.string().optional(), // 已部署的在线版本（live 作品优先使用）
     source: z.string().optional(),
     poster: z.string().optional(),
+    posterAlt: z.string().optional(),
+    stagePoster: z.string().optional(), // 播放区域封面；竖屏作品使用单独的 9:16 构图
+    duration: z.string().optional(),
   }),
 });
 

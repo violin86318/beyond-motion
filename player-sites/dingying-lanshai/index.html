@@ -1,0 +1,94 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="定影 · 蓝晒相册"><meta property="og:image" content="https://beyondmotion.net/w/dingying-lanshai/cover.jpg">
+<title>定影 · 蓝晒相册</title>
+<link rel="stylesheet" href="title-cover.css">
+<style>
+@font-face{font-family:"Noto Serif SC";src:url(fonts/NotoSerifSC-VF.ttf);font-weight:200 900;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url(fonts/CormorantGaramond-Italic-VF.ttf);font-weight:100 900;font-style:italic;font-display:swap}
+/* 单一深蓝世界：整屏是一页蓝晒相册，控制条像页脚的白墨水注记 */
+:root {
+  --ink: #050f22; --page: #081a36; --prus: #1e4a86; --pale: #cfe0f2; --white: #f3f6fa;
+  --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --ital: "Cormorant Garamond", "Garamond", "Times New Roman", serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--ink); color: var(--pale); font-family: var(--serif); overflow: hidden; }
+.stage { position: fixed; inset: 0; display: grid; place-items: center; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+#c { width: min(100vw, calc(100vh * 16 / 9)); max-width: 100%; aspect-ratio: 16 / 9; display: block; background: var(--page); }
+.cover { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(70% 60% at 50% 45%, rgba(8,26,54,.35), rgba(5,15,34,.85)); transition: opacity .6s ease; padding-inline: 16px; }
+.cover[hidden] { display: none !important; }
+.cover.fade { opacity: 0; }
+.card { display: grid; gap: 14px; justify-items: center; text-align: center; max-width: 34rem; }
+.card h1 { margin: 0; font-weight: 200; font-size: clamp(56px, 12vw, 120px); letter-spacing: .12em; color: var(--white); line-height: 1; text-wrap: balance; }
+.card p { margin: 0; font-family: var(--ital); font-style: italic; font-size: clamp(16px, 2.4vw, 22px); color: var(--pale); opacity: .8; }
+.card .meta { font-family: var(--serif); font-style: normal; font-weight: 300; font-size: 14px; letter-spacing: .2em; opacity: .6; }
+#go { margin-top: 10px; font: 300 17px var(--serif); letter-spacing: .3em; color: var(--page); background: var(--pale); border: 0; padding: 14px 30px 14px 36px; cursor: pointer; transition: background .2s; }
+#go:hover { background: var(--white); }
+#go:disabled { opacity: .5; cursor: progress; }
+button:focus-visible, #bar:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+.ui { position: fixed; left: 0; right: 0; bottom: 0; padding: 18px 16px calc(12px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; background: linear-gradient(transparent, rgba(5,15,34,.85)); transition: opacity .5s; }
+.ui.idle { opacity: 0; }
+#bar { position: relative; height: 16px; cursor: pointer; touch-action: none; }
+#bar .track { position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: rgba(207,224,242,.25); }
+#bar .fill { position: absolute; left: 0; top: 6px; height: 3px; width: 0; background: var(--pale); }
+.row { display: flex; align-items: center; gap: 14px; font-family: var(--ital); font-style: italic; font-size: 17px; }
+.row .sp { flex: 1; }
+.ctl { font: italic 500 17px var(--ital); color: var(--pale); background: transparent; border: 1px solid rgba(207,224,242,.35); padding: 4px 14px; cursor: pointer; }
+.ctl:hover { border-color: var(--white); color: var(--white); }
+#tc { font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) { .row .hint { display: none; } }
+</style>
+
+</head><body>
+<div class="stage">
+  <canvas id="c" width="1920" height="1080" aria-label="定影 · 蓝晒 MV 画面"></canvas>
+  <div class="cover" id="cover"><img class="title-art" src="cover.jpg" alt="定影蓝晒相册：植物的日光印痕"/><div class="title-actions"><button id="go" type="button" disabled>载入中…</button><p class="title-hint" id="title-status" role="status">含声音 · 建议戴耳机</p></div></div>
+</div>
+<div class="ui idle" id="ui">
+  <div id="bar" tabindex="0" role="slider" aria-label="进度" aria-valuemin="0" aria-valuemax="256" aria-valuenow="0"><div class="track"></div><div class="fill" id="fill"></div></div>
+  <div class="row">
+    <button class="ctl" id="play" type="button">play</button>
+    <span id="tc">00:00 / 04:16</span>
+    <span class="sp"></span>
+    <span class="hint">space · ← →</span>
+    <button class="ctl" id="fs" type="button">full screen</button>
+  </div>
+</div>
+<audio id="au" src="assets/song.mp3" preload="auto"></audio>
+<script charset="utf-8" src="data.js?v=title-20261006"></script>
+<script charset="utf-8" src="mv.js?v=title-20261006"></script>
+<script>
+(() => {
+const $ = id => document.getElementById(id), c = $('c'), au = $('au'), go = $('go'), ui = $('ui');
+const K = ['P01','P02','P03','P04','P05','P06','P07','P08','P09','P10','P11','P12','P13','P14','P15','P16','P17','P18','P19','P20','P21','P22','P23','P24'];
+const assets = Object.fromEntries(K.map(k => [k, `app/assets/${k}.jpg`])); assets.verse = 'app/assets/cyan_verse.jpg'; assets.chorus = 'app/assets/cyan_chorus.jpg';
+const fmt = t => { t = Math.max(0, t); return `${String(t / 60 | 0).padStart(2, '0')}:${String(t % 60 | 0).padStart(2, '0')}`; };
+let ready = false, raf = 0;
+const draw = () => { MV.frame(au.currentTime); const k = au.currentTime / MV.DUR; $('fill').style.width = (k * 100) + '%'; $('tc').textContent = `${fmt(au.currentTime)} / 04:16`; $('bar').setAttribute('aria-valuenow', au.currentTime | 0); };
+const loop = () => { draw(); if (!au.paused) raf = requestAnimationFrame(loop); };
+MV.init(c, assets).then(() => { ready = true; MV.frame(0); go.disabled = false; go.textContent = '▶ 翻开相册'; if (new URLSearchParams(location.search).get('autoplay') === '1') go.click(); }).catch(() => { $('title-status').textContent = '素材载入失败，请刷新重试。'; });
+const play = () => { if (!ready) return; au.play().then(() => { $('cover').hidden = true; cancelAnimationFrame(raf); loop(); $('play').textContent = 'pause'; }).catch(() => { $('cover').hidden = false; $('title-status').textContent = '请点击翻开相册，允许声音播放。'; }); };
+const pause = () => { au.pause(); $('play').textContent = 'play'; };
+go.onclick = () => { play(); poke(); };
+$('play').onclick = () => au.paused ? play() : pause();
+au.onended = () => { pause(); };
+const seekTo = x => { const r = $('bar').getBoundingClientRect(); au.currentTime = Math.max(0, Math.min(1, (x - r.left) / r.width)) * MV.DUR; draw(); };
+let drag = false;
+$('bar').addEventListener('pointerdown', e => { drag = true; $('bar').setPointerCapture(e.pointerId); seekTo(e.clientX); });
+$('bar').addEventListener('pointermove', e => { if (drag) seekTo(e.clientX); });
+$('bar').addEventListener('pointerup', () => { drag = false; });
+document.addEventListener('keydown', e => {
+  if (!ready || !$('cover').hidden) return;
+  if (e.code === 'Space') { e.preventDefault(); au.paused ? play() : pause(); }
+  if (e.code === 'ArrowRight') { au.currentTime = Math.min(MV.DUR, au.currentTime + 5); draw(); }
+  if (e.code === 'ArrowLeft') { au.currentTime = Math.max(0, au.currentTime - 5); draw(); }
+  poke();
+});
+$('fs').onclick = () => { const d = document.documentElement; (document.fullscreenElement ? document.exitFullscreen() : d.requestFullscreen?.())?.catch?.(() => {}); };
+let idle; const poke = () => { ui.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { if (!au.paused) ui.classList.add('idle'); }, 2500); };
+document.addEventListener('pointermove', poke); document.addEventListener('pointerdown', poke);
+})();
+</script>
+
+</body></html>

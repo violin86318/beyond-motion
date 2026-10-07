@@ -9,7 +9,9 @@ tech:
   - Canvas 字形与歌词
   - 音乐时间线
 featured: true
-poster: /w/tuigejian-mv/poster.webp
+poster: /w/tuigejian-mv/cover.jpg
+posterAlt: 退格键主题封面：一枚黑橙色的巨大退格按键
+duration: "02:58"
 ---
 
 从键盘上的一个按键出发，把「退格」做成一件视听作品。WebGL 图形与字形排版共同构成画面，歌词和音乐时间线把它们串联起来。

@@ -1,0 +1,21 @@
+/* Shared title artwork, independent of the frame rendered underneath. */
+.title-screen, #card, #cover {
+  position:fixed; inset:0; padding:0!important; display:block!important;
+  background:#0b0c10!important; z-index:40;
+}
+.title-screen[hidden], #cover[hidden], #card.gone { display:none!important; }
+.title-art { display:block; position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.title-actions { position:absolute; right:5%; bottom:12%; display:flex; flex-direction:column; align-items:flex-end; gap:9px; max-width:90%; }
+.title-actions button {
+  margin:0!important; padding:12px 22px!important; border:1px solid rgba(255,255,255,.45)!important;
+  background:#eee9df!important; color:#151515!important; font:500 14px/1.4 "Hiragino Sans GB","Noto Sans SC",sans-serif!important;
+  letter-spacing:.1em!important; cursor:pointer; border-radius:0!important;
+}
+.title-actions button:hover { background:white!important; }
+.title-actions button:focus-visible { outline:2px solid #ffb23f; outline-offset:5px; }
+.title-actions button:disabled { opacity:.6; cursor:progress; }
+.title-actions .title-hint { color:#b7b7b7; font:11px/1.5 sans-serif; text-align:right; margin:0; }
+.title-screen.portrait .title-actions { bottom:9%; right:50%; transform:translateX(50%); align-items:center; width:90%; }
+.title-screen.portrait .title-hint { text-align:center; }
+#big { display:none!important; }
+@media(max-height:400px) { .title-actions { bottom:10%; gap:4px; }.title-actions button { padding:8px 16px!important; font-size:12px!important; }.title-hint { display:none; } }
