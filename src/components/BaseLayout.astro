@@ -1,7 +1,7 @@
 ---
 import '../styles/tokens.css';
 interface Props { title: string; description?: string; image?: string; }
-const { title, image = '/w/dingying-fix/cover.jpg', description = 'violin 的创作现场：影像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
+const { title, image = '/w/dingying-fix/cover-bilibili.jpg', description = 'violin 的创作现场：影像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
 const year = new Date().getFullYear();
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const nav = [['/works','作品'],['/notes','文章'],['/music','音乐'],['/studio','石榴工作室'],['/about','关于']];

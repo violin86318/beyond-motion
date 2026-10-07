@@ -9,7 +9,7 @@ tech:
   - 蓝晒影像素材
   - 音乐与歌词同步
 featured: true
-poster: /w/dingying-lanshai/cover.jpg
+poster: /w/dingying-lanshai/cover-bilibili.jpg
 posterAlt: 定影蓝晒相册主题封面：普鲁士蓝上的植物日光印痕
 duration: "04:16"
 ---

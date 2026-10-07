@@ -10,7 +10,7 @@ tech:
   - Canvas 图形与歌词叠层
   - 音画时间同步
 featured: true
-poster: /w/lingdian-mv/cover.jpg
+poster: /w/lingdian-mv/cover-bilibili.jpg
 stagePoster: /w/lingdian-mv/cover-portrait.jpg
 posterAlt: 零点前三十秒主题封面：城市灯火与零点倒计时
 duration: "03:14"

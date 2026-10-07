@@ -27,7 +27,7 @@ for slug, assets in ASSETS.items():
     fonts = ROOT / 'player-sites' / slug / 'fonts'
     if fonts.exists():
         shutil.copytree(fonts, target / 'fonts')
-    for name in ['cover.jpg', 'cover-portrait.jpg']:
+    for name in ['cover-bilibili.jpg', 'cover-portrait.jpg']:
         cover = ROOT / 'public/w' / slug / name
         if cover.exists():
             shutil.copy2(cover, target / name)

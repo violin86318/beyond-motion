@@ -65,7 +65,7 @@ description: "作品介绍"
 tech: [创作方法]
 draft: true
 url: https://example.com # 网页作品或外部视频地址，可选
-poster: /w/example/cover.jpg
+poster: /w/example/cover-bilibili.jpg
 posterAlt: "主题封面的画面说明"
 stagePoster: /w/example/cover-portrait.jpg # 可选，竖屏播放区域使用
 duration: "03:14" # 可选
@@ -79,7 +79,9 @@ orientation: landscape # landscape 横屏 / portrait 竖屏
 
 封面采用独立的主题构图，不从音乐时间线任意截帧。首页与作品列表统一用 16:9；竖屏作品另用 `stagePoster` 的 9:16 构图。播放按钮在封面之外，加载前后保留画面比例。「返回封面」会移除 iframe 并停止内嵌作品。分享图使用同一横版 JPEG。
 
-四张封面的可编辑构图在 `scripts/build-work-covers.mjs`；运行 `node scripts/build-work-covers.mjs` 会重新生成 `public/w/` 中的 SVG 与 JPEG，需要本机有中文字体。页面上这些图是标题封面，不是 MV 截帧。
+四张封面的可编辑构图在 `scripts/build-work-covers.mjs`；运行 `node scripts/build-work-covers.mjs` 会重新生成 `public/w/` 中的 `cover-bilibili.svg` 与 JPEG，并生成本机 `.local-deploy/bilibili-covers/` 的上传成品、裁切预览与离线对照页。需要本机有中文字体。页面上这些图是标题封面，不是 MV 截帧。
+
+横版成品为 1920×1080（16:9）。重要标题、说明与主题主体位于居中的 1440×1080（4:3）安全区内：左右各 240 像素用于延伸背景。作品列表与播放器仍按作品本身的比例展示。B站上传用名称含 `16x9` 的 JPG，`4x3预览` 用于检查中心裁切。安全区虚线仅出现在对照页，不进入成品。
 
 ### 原作品页的封面
 

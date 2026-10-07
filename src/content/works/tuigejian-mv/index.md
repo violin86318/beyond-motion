@@ -9,7 +9,7 @@ tech:
   - Canvas 字形与歌词
   - 音乐时间线
 featured: true
-poster: /w/tuigejian-mv/cover.jpg
+poster: /w/tuigejian-mv/cover-bilibili.jpg
 posterAlt: 退格键主题封面：一枚黑橙色的巨大退格按键
 duration: "02:58"
 ---

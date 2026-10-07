@@ -10,7 +10,7 @@ tech:
   - MP3 音频驱动
   - Opus 5.5 协作生成
 featured: true
-poster: /w/dingying-fix/cover.jpg
+poster: /w/dingying-fix/cover-bilibili.jpg
 posterAlt: 定影 FIX 主题封面：暗房中的胶片与显影的光
 duration: "04:16"
 ---
