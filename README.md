@@ -97,6 +97,8 @@ wrangler pages deploy .local-deploy/players/lingdian-mv --project-name=lingdian-
 
 原作品页独立打开时显示主题封面；门户点击播放时用 `autoplay=1` 请求从头播放。如果浏览器限制声音，保留封面按钮供再次点击。蓝晒相册字体随站点发布，避免依赖在线字体请求。
 
+蓝晒相册原始中文字体约 25 MB，发布的 WOFF2 字形子集约 152 KB，另附 30 KB 的英文斜体与 OFL 许可。修改蓝晒歌词或字幕后，用安装了 `fonttools`、`brotli` 的 Python 运行 `scripts/subset-cyanotype-fonts.py <蓝晒原站点目录>` 更新子集，再构建原作品页。
+
 ## 石榴精选版
 
 `studio-sites/wedding/`、`studio-sites/portrait/` 保存已选定的公开数据与压缩样片；`studio-sites/shared/` 保存共用页面、样式与提示词组装逻辑。构建不依赖原始素材库。

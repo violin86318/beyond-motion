@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = {
     'dingying-fix': ['dingying.mp3'],
-    'dingying-lanshai': ['mv.js', 'data.js', 'app/assets', 'assets/song.mp3', ('../src/app/fonts', 'fonts')],
+    'dingying-lanshai': ['mv.js', 'data.js', 'app/assets', 'assets/song.mp3'],
     'tuigejian-mv': ['app.js', 'audio.mp3', 'fonts'],
     'lingdian-mv': ['env.js', 'gfx.js', 'video.mp4', 'song.mp3'],
 }
@@ -19,9 +19,14 @@ sources = json.loads(Path(sys.argv[1]).read_text())
 for slug, assets in ASSETS.items():
     source = Path(sources[slug])
     target = ROOT / '.local-deploy/players' / slug
+    if target.exists():
+        shutil.rmtree(target)  # Rebuild our generated bundle; exclude obsolete assets.
     target.mkdir(parents=True, exist_ok=True)
     shutil.copy2(ROOT / 'player-sites' / slug / 'index.html', target / 'index.html')
     shutil.copy2(ROOT / 'player-sites/title-cover.css', target / 'title-cover.css')
+    fonts = ROOT / 'player-sites' / slug / 'fonts'
+    if fonts.exists():
+        shutil.copytree(fonts, target / 'fonts')
     for name in ['cover.jpg', 'cover-portrait.jpg']:
         cover = ROOT / 'public/w' / slug / name
         if cover.exists():
