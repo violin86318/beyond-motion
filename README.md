@@ -10,7 +10,7 @@
 | 石榴婚礼（30 款） | https://wedding.beyondmotion.net | https://shiliu-wedding.pages.dev |
 | 石榴写真（24 组） | https://portrait.beyondmotion.net | https://shiliu-portrait.pages.dev |
 
-音乐继续由 https://music.1986318.xyz 承载，主站提供入口；视频作品提供《定影》播放与 Bilibili 入口。海报小站保留在原工作区，暂不部署。
+音乐入口现指向 https://violin-music.pages.dev 的「专辑听室」，首版收录 6 首作品、2 组主题选集。原有灵感音乐、番茄音乐报和风格听室继续独立运行。`music.beyondmotion.net` 的自定义域名尚待 DNS 配置和 HTTPS 验证，验证完成后再切换入口。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。海报小站保留在原工作区，暂不部署。
 
 ## 开发与检查
 
