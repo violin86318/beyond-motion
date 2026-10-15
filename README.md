@@ -103,9 +103,9 @@ wrangler pages deploy .local-deploy/players/lingdian-mv --project-name=lingdian-
 
 ## 石榴精选版
 
-`studio-sites/wedding/`、`studio-sites/portrait/` 保存已选定的公开数据与压缩样片；`studio-sites/shared/` 保存共用页面、样式与提示词组装逻辑。构建不依赖原始素材库。
+`studio-sites/wedding/`、`studio-sites/portrait/` 保存选集、压缩样片，以及仅供本地核对的提示词配方。`npm run build:studios` 写入公开产物时会去掉 `prompt`、`soup` 等配方字段，也不复制 `prompt.js`。`studio-sites/shared/` 保存共用页面与样式。构建不依赖原始素材库。
 
-婚礼版：3 个分类，每类 10 款。写真版：24 组，每组最多 2 张参考样片。浏览、搜索、收藏和提示词复制均在浏览器中完成，无登录、照片上传或在线图像生成。收藏只保存在当前设备，输入刷新后清除。
+婚礼版：3 个分类，每类 10 款。写真版：24 组，每组最多 2 张参考样片。公开页面可浏览、搜索和收藏样片，展示名称、描述和分类，不提供提示词组装或下载。无登录、照片上传或在线图像生成。收藏只保存在当前设备。
 
 重新从本地原项目整理选集（需要 Pillow）：
 

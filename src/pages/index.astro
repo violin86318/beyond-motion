@@ -14,7 +14,7 @@ const notes=(await getCollection('notes',({data})=>!data.draft)).sort((a,b)=>b.d
 {moreWorks.length > 0 && <section class="more-films"><div class="section-title"><h2>继续看片</h2><a href="/works">全部作品 →</a></div><div class="film-grid">{moreWorks.map(w=><a href={`/works/${w.id}`}><img src={w.data.poster} alt={w.data.posterAlt ?? w.data.title} width="1280" height="720" loading="lazy"/><span class="film-meta annot">{w.data.duration} · {w.data.orientation === 'portrait' ? '9:16 竖屏' : '16:9 横屏'}</span><h3>{w.data.title} <span aria-hidden="true">↗</span></h3><p>{w.data.description}</p></a>)}</div></section>}
 <section class="writing"><div class="section-title"><h2><small>01</small>最近在想</h2><a href="/notes">全部文章 →</a></div>{notes.map((n,i)=><a class="note-row" href={`/notes/${n.id}`}><span class="annot">0{i+1} / {n.data.date}</span><div><h3>{n.data.title}</h3><p>{n.data.description}</p></div><span aria-hidden="true">↗</span></a>)}</section>
 <section class="music-band"><div><p class="eyebrow">02 / Music, in another form</p><h2>有些话，<br/>适合唱出来。</h2></div><div><p>旋律是另一种写作。原创歌曲、声音实验和创作记录，收在我的音乐站里。</p><a class="button" href="/music">去听一会儿 ↗</a></div><span class="staff" aria-hidden="true">〰</span></section>
-<section class="studio"><div class="section-title"><h2><small>03</small>石榴工作室</h2><a href="/studio">关于这些小工具 →</a></div><StudioCards /></section>
+<section class="studio"><div class="section-title"><h2><small>03</small>石榴工作室</h2><a href="/studio">看精选样片 →</a></div><StudioCards /></section>
 <section class="endnote"><span class="eyebrow">The person behind the work</span><p>媒介一直在变。<br/>把事情讲清楚的心意没变。</p><a href="/about">认识 violin →</a></section>
 </BaseLayout>
 <style>
