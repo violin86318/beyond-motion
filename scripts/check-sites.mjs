@@ -28,4 +28,16 @@ for (const site of getSites()) {
 for (const site of sites.filter(site => site.status === 'draft')) {
   assert(!directory.includes(`data-site-id="${site.id}"`), `目录泄露草稿：${site.id}`);
 }
+const readPage = route => fs.readFileSync(new URL(`../dist/${route ? `${route}/` : ''}index.html`, import.meta.url), 'utf8');
+const cardIds = html => [...html.matchAll(/data-site-id="([^"]+)"/g)].map(match => match[1]);
+assert.deepEqual(cardIds(readPage('')), getSites({ featured: true }).slice(0, 3).map(site => site.id), '首页精选须与清单一致');
+for (const [category, route] of [['creative', 'works'], ['reading', 'reading'], ['tools', 'tools']]) {
+  assert.deepEqual(cardIds(readPage(route)), getSites({ category }).map(site => site.id), `${route}须与目录同源`);
+}
+for (const [route, label] of [['works','创作'], ['works/dingying-fix','创作'], ['music','创作'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
+  const html = readPage(route);
+  assert(new RegExp(`<a[^>]+aria-current="page"[^>]*>${label}</a>`).test(html), `栏目高亮有误：${route}`);
+}
+const sitemap = fs.readFileSync(new URL('../dist/sitemap.xml', import.meta.url), 'utf8');
+for (const route of ['reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
 console.log(`Site catalogue: ${getSites().length} entries, status/URL/cover checks passed.`);

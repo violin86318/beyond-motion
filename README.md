@@ -10,7 +10,7 @@
 | 石榴婚礼（30 款） | https://wedding.beyondmotion.net | https://shiliu-wedding.pages.dev |
 | 石榴写真（24 组） | https://portrait.beyondmotion.net | https://shiliu-portrait.pages.dev |
 
-音乐入口现指向 https://violin-music.pages.dev 的「专辑听室」，首版收录 6 首作品、2 组主题选集。原有灵感音乐、番茄音乐报和风格听室继续独立运行。`music.beyondmotion.net` 的自定义域名尚待 DNS 配置和 HTTPS 验证，验证完成后再切换入口。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。海报小站保留在原工作区，暂不部署。
+音乐入口为 https://music.beyondmotion.net 的「专辑听室」，当前收录 16 首作品、4 组主题选集。原有灵感音乐、番茄音乐报和风格听室继续独立运行。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。海报小站保留在原工作区，暂不部署。
 
 ## 开发与检查
 
@@ -22,6 +22,36 @@ npm run check
 ```
 
 `dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。检查涵盖内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。
+
+## 门户结构与新增小站
+
+首页保留个人介绍、代表作品、最近文章与音乐，并从清单中取最多三个精选小站。导航固定为创作 `/works/`、阅读 `/reading/`、工具 `/tools/`、全部小站 `/sites/`、关于 `/about/`。旧文章、音乐、工作室和详情地址继续使用。
+
+新增独立小站时，只需在 `src/data/sites.json` 添加一条资料：
+
+```json
+{
+  "id": "new-site",
+  "name": "小站名称",
+  "description": "告诉访问者这里能看什么、做什么。",
+  "category": "reading",
+  "tags": ["编译"],
+  "url": "https://example.com/",
+  "cover": null,
+  "coverAlt": "",
+  "status": "draft",
+  "featured": false,
+  "order": 110
+}
+```
+
+- `category` 为 `creative`（创作）、`reading`（阅读）或 `tools`（工具）。对应栏目和总目录自动收录，无需增加一级导航。
+- 图片放进 `public/sites/`，引用如 `/sites/new-site.webp`，并填写 `coverAlt`。封面以 3:2 容器完整显示；`cover: null` 会生成站名排字封面。现有日刊、音乐和编译封面为固定的公开选图，不自动更新。
+- `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
+- `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
+- URL 采用完整 HTTPS 地址或站内路径。外站显示新窗口标记；重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类/首页一致和导航高亮。
+
+修改后执行 `npm run build:all && npm run check`，用 `npm run dev -- --port 7101` 查看效果。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ## 发布文章
 

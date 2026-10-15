@@ -2,6 +2,9 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import WorkCard from '../../components/WorkCard.astro';
+import SiteCard from '../../components/SiteCard.astro';
+import { getSites } from '../../lib/sites.mjs';
+const creativeSites = getSites({ category: 'creative' });
 
 const works = (await getCollection('works', ({data}) => !data.draft))
   .sort((a, b) => b.data.date.localeCompare(a.data.date) || a.id.localeCompare(b.id));
@@ -9,13 +12,15 @@ const works = (await getCollection('works', ({data}) => !data.draft))
 const labels: Record<string,string> = {live:'实时影像',video:'视频',image:'图像',music:'音乐'};
 const FILTERS = [{key:'all',label:'全部'}, ...[...new Set(works.map(w=>w.data.type))].map(key=>({key,label:labels[key]}))];
 ---
-<BaseLayout title="作品库">
+<BaseLayout title="创作">
   <section class="head" data-reveal>
     <span class="annot">FIG.02 — CATALOGUE</span>
-    <h1>作品库</h1>
-    <p class="annot">{works.length} 件 · 持续生长中</p>
+    <h1>创作，持续发生。</h1>
+    <p class="intro">从影像出发，也把感受写进声音、纸面与不同的创作实验。</p>
+    <div class="actions"><a class="button secondary" href="#films">影像作品 ↓</a><a class="button secondary" href="/music/">音乐档案 →</a><a class="button secondary" href="#creative-sites">音乐与视觉小站 ↓</a></div>
   </section>
 
+  <section id="films"><div class="section-title"><h2>影像作品</h2><span class="annot">{works.length} 件作品</span></div>
   <div class="filters annot" id="filters" data-reveal>
     {FILTERS.map(f => (
       <button data-filter={f.key} aria-pressed={f.key === 'all'} class:list={[{ on: f.key === 'all' }]}>{f.label}</button>
@@ -26,9 +31,12 @@ const FILTERS = [{key:'all',label:'全部'}, ...[...new Set(works.map(w=>w.data.
     {works.map((w, i) => <WorkCard no={String(i + 1).padStart(3, '0')} work={w} delay={`${i * .06}s`} />)}
   </div>
 <p class="more-links"><a href="/music">进入音乐档案 ↗</a> · <a href="https://space.bilibili.com/19258410" target="_blank" rel="noopener noreferrer">更多视频作品 · Bilibili ↗</a></p>
+  </section>
+  <section id="creative-sites" class="creative-sites"><div class="section-title"><h2>音乐与视觉</h2><a href="/sites/#creative">全部创作小站 →</a></div>{creativeSites.length ? <div class="site-grid">{creativeSites.map(site => <SiteCard site={site} />)}</div> : <p class="intro">新的创作小站正在准备。</p>}</section>
 </BaseLayout>
 
 <style>
+.intro{font-size:14px;line-height:1.9;color:var(--quiet)}.creative-sites{margin-top:64px;scroll-margin-top:24px}#films{scroll-margin-top:24px}
 .more-links{margin-top:35px;font-size:13px;line-height:2.2}
   .head { padding: 72px 0 40px; position: relative; }
   .head h1 { font-weight: 900; font-size: clamp(40px, 6vw, 72px); margin: 14px 0 10px; }
