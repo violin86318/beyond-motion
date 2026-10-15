@@ -2,15 +2,42 @@ import rawSites from '../data/sites.json' with { type: 'json' };
 
 export const portalOrigin = 'https://beyondmotion.net';
 
+// Hosts already used by src/data/sites.json that are neither beyondmotion.net
+// nor one of its subdomains. pages.dev is not allowed as a suffix.
+export const allowedExternalHosts = [
+  'zine-1986318.pages.dev',
+  'aihot.1986318.xyz',
+  'horizon.1986318.xyz',
+  'music.1986318.xyz',
+  'style.1986318.xyz',
+  'tomato.1986318.xyz',
+];
+
+export function isAllowedSiteHost(hostname) {
+  const host = String(hostname || '').toLowerCase().replace(/\.$/, '');
+  if (host === 'beyondmotion.net' || host.endsWith('.beyondmotion.net')) return true;
+  return allowedExternalHosts.includes(host);
+}
+
 export const categories = [
   { id: 'creative', name: '创作', description: '影像之外，还有音乐、纸面与不断生长的创作实验。' },
   { id: 'reading', name: '阅读', description: '编译长文与科技资讯，沿着不同的视角继续追问。' },
   { id: 'tools', name: '工具', description: '把想法做成可使用的小产品，从一次具体的需要开始。' },
 ];
 
+// Collapse duplicate slashes and drop a trailing slash before dedupe.
+// The root stays a single slash, then the trailing slash on the absolute URL is removed.
+function canonicalSiteUrl(address) {
+  const copy = new URL(address.href);
+  let path = copy.pathname.replace(/\/{2,}/g, '/');
+  if (path.length > 1) path = path.replace(/\/+$/, '');
+  copy.pathname = path;
+  return copy.href.replace(/\/$/, '');
+}
+
 // One classifier for catalogue validation and every SiteCard.
 // Same-origin HTTPS becomes a path and opens in this window.
-// Subdomains, the Pages hostname, and other sites stay external.
+// Other HTTPS hosts must be on the allowlist and stay external.
 export function resolveSiteLink(url) {
   if (typeof url !== 'string' || !url.trim() || /[\s\\]/.test(url)) throw new Error('地址无效');
   let address;
@@ -21,9 +48,11 @@ export function resolveSiteLink(url) {
   }
   const portal = new URL(portalOrigin);
   const sameOrigin = address.origin === portal.origin;
-  const normalized = address.href.replace(/\/$/, '');
-  if (internalPath || sameOrigin) return { external: false, href: `${address.pathname}${address.search}`, normalized };
-  return { external: true, href: url, normalized };
+  if (!internalPath && !sameOrigin && !isAllowedSiteHost(address.hostname)) throw new Error(`外链主机不在白名单：${address.hostname}`);
+  const normalized = canonicalSiteUrl(address);
+  const host = address.hostname;
+  if (internalPath || sameOrigin) return { external: false, href: `${address.pathname}${address.search}`, normalized, host };
+  return { external: true, href: url, normalized, host };
 }
 
 // Run during static build as well as release checks. Nothing fetches a live site.

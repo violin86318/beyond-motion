@@ -10,7 +10,7 @@
 | 石榴婚礼（30 款） | https://wedding.beyondmotion.net | https://shiliu-wedding.pages.dev |
 | 石榴写真（24 组） | https://portrait.beyondmotion.net | https://shiliu-portrait.pages.dev |
 
-音乐入口为 https://music.beyondmotion.net 的「专辑听室」，当前收录 16 首作品、4 组主题选集。原有灵感音乐、番茄音乐报和风格听室继续独立运行。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。海报小站保留在原工作区，暂不部署。
+门户音乐页是 `/music/`。页内「专辑听室」指向 https://music.beyondmotion.net ，写明 4 组主题选集、合计 16 首：六月之后 4 首、便利店，夜还亮着 6 首、记忆的暗房 3 首、尚未说出口 3 首。另有 6 首带手记的曲目链到同一听室。灵感音乐、番茄音乐报和风格听室继续独立运行，地址分别是 https://music.1986318.xyz/ 、https://tomato.1986318.xyz/ 、https://style.1986318.xyz/ 。首页的音乐按钮进入站内 `/music/`，不直接打开听室。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。视觉日刊「纸上片刻」以公开外站列入小站清单，地址为 https://zine-1986318.pages.dev/ 。
 
 ## 开发与检查
 
@@ -52,7 +52,7 @@ npm run preview -- --host 127.0.0.1 --port 7102
   "description": "告诉访问者这里能看什么、做什么。",
   "category": "reading",
   "tags": ["编译"],
-  "url": "https://example.com/",
+  "url": "https://notes.beyondmotion.net/",
   "cover": null,
   "coverAlt": "",
   "status": "draft",
@@ -65,7 +65,7 @@ npm run preview -- --host 127.0.0.1 --port 7102
 - 图片放进 `public/sites/`，引用如 `/sites/new-site.webp`，并填写 `coverAlt`。封面以 3:2 容器完整显示；`cover: null` 会生成站名排字封面。现有日刊、音乐和编译封面为固定的公开选图，不自动更新。
 - `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
 - `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
-- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...` 与主站同域，卡片会转成站内路径，并在当前窗口打开。子域名、Pages 备用域名和其他网站仍是独立外站，在新窗口打开，并保留“在新窗口打开”的提示。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址和独立外站。
+- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`、`tomato.1986318.xyz`。不在白名单里的主机会让构建和 `npm run check` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
 
 修改后执行 `npm run build:all && npm run check`，再用 `npm run check:astro` 看类型诊断。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 

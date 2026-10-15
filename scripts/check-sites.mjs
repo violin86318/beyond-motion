@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { sites, getSites, validateSites, resolveSiteLink } from '../src/lib/sites.mjs';
+import { sites, getSites, validateSites, resolveSiteLink, allowedExternalHosts, isAllowedSiteHost } from '../src/lib/sites.mjs';
 
 const sample = sites[0];
 // Given a non-public record, publishing lists must not expose it, even if featured.
@@ -27,14 +27,70 @@ for (const [url, external, href] of [
   ['https://music.beyondmotion.net/', true, 'https://music.beyondmotion.net/'],
   ['https://wedding.beyondmotion.net/', true, 'https://wedding.beyondmotion.net/'],
   ['https://zine-1986318.pages.dev/', true, 'https://zine-1986318.pages.dev/'],
-  ['https://beyond-motion.pages.dev/reading/', true, 'https://beyond-motion.pages.dev/reading/'],
   ['https://www.beyondmotion.net/about/', true, 'https://www.beyondmotion.net/about/'],
-  ['https://example.com/outside/', true, 'https://example.com/outside/'],
+  ['https://music.1986318.xyz/', true, 'https://music.1986318.xyz/'],
+  ['https://tomato.1986318.xyz/', true, 'https://tomato.1986318.xyz/'],
+  ['https://style.1986318.xyz/', true, 'https://style.1986318.xyz/'],
+  ['https://horizon.1986318.xyz/', true, 'https://horizon.1986318.xyz/'],
+  ['https://aihot.1986318.xyz/', true, 'https://aihot.1986318.xyz/'],
 ]) {
   const link = resolveSiteLink(url);
   assert.equal(link.external, external, url);
   assert.equal(link.href, href, url);
+  if (external) assert.equal(link.host, new URL(url).hostname, url);
 }
+for (const url of [
+  'https://example.com/outside/',
+  'https://beyond-motion.pages.dev/reading/',
+  'https://evil.pages.dev/',
+  'https://evil.1986318.xyz/',
+  'https://notbeyondmotion.net/',
+  'https://beyondmotion.net.evil.example/',
+  'https://zine-1986318.pages.dev.evil.example/a',
+]) {
+  assert.equal(isAllowedSiteHost(new URL(url).hostname), false, url);
+  assert.throws(() => resolveSiteLink(url), /白名单/, url);
+  assert.throws(() => validateSites([entry('blocked-host', url)]), /白名单/, url);
+}
+for (const host of allowedExternalHosts) assert.doesNotThrow(() => resolveSiteLink(`https://${host}/`), host);
+assert.equal(
+  resolveSiteLink('https://music.beyondmotion.net//album//').normalized,
+  resolveSiteLink('https://music.beyondmotion.net/album').normalized,
+  '重复斜杠在去重前折叠',
+);
+assert.equal(
+  resolveSiteLink('https://every.beyondmotion.net/posts/').normalized,
+  resolveSiteLink('https://every.beyondmotion.net/posts').normalized,
+  '尾斜杠在去重前去掉',
+);
+assert.equal(
+  resolveSiteLink('https://music.beyondmotion.net//').normalized,
+  'https://music.beyondmotion.net',
+);
+assert.equal(
+  resolveSiteLink('/reading//notes/').normalized,
+  resolveSiteLink('https://beyondmotion.net/reading/notes').normalized,
+);
+assert.equal(
+  resolveSiteLink('https://beyondmotion.net/notes//?kind=piece').normalized,
+  resolveSiteLink('/notes?kind=piece').normalized,
+);
+assert.throws(() => validateSites([
+  entry('slash-a', 'https://music.beyondmotion.net/album//'),
+  entry('slash-b', 'https://music.beyondmotion.net/album'),
+]), /地址重复/);
+assert.throws(() => validateSites([
+  entry('trail-a', 'https://wedding.beyondmotion.net/'),
+  entry('trail-b', 'https://wedding.beyondmotion.net'),
+]), /地址重复/);
+assert.throws(() => validateSites([
+  entry('path-a', '/works//dingying-fix/'),
+  entry('path-b', 'https://beyondmotion.net/works/dingying-fix'),
+]), /地址重复/);
+assert.doesNotThrow(() => validateSites([
+  entry('kept-a', 'https://music.beyondmotion.net/album'),
+  entry('kept-b', 'https://music.beyondmotion.net/other'),
+]));
 assert.doesNotThrow(() => validateSites([entry('internal-path', '/reading/')]));
 assert.doesNotThrow(() => validateSites([entry('same-origin', 'https://beyondmotion.net/reading/')]));
 assert.doesNotThrow(() => validateSites([entry('independent-site', 'https://music.beyondmotion.net/')]));
@@ -61,9 +117,12 @@ function assertCardLink(html, site) {
     assert(slice.includes('rel="noopener noreferrer"'), `${site.id} 外站缺少 rel`);
     assert(slice.includes('（在新窗口打开）'), `${site.id} 外站缺少新窗口提示`);
     assert(slice.includes('进入小站 ↗'), `${site.id} 外站文案有误`);
+    const hostPattern = link.host.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert(new RegExp(`<span class="site-host"[^>]*>${hostPattern}</span>`).test(slice), `${site.id} 外站应显示主机名`);
   } else {
     assert(!slice.includes('target='), `${site.id} 站内链接不应新窗口打开`);
     assert(!slice.includes('（在新窗口打开）'), `${site.id} 站内链接不应提示新窗口`);
+    assert(!slice.includes('class="site-host"'), `${site.id} 站内链接不应显示外链主机`);
     assert(slice.includes('打开页面 →'), `${site.id} 站内文案有误`);
   }
 }
