@@ -13,12 +13,15 @@
     "deploy:wedding": "wrangler pages deploy .studio-dist/wedding --project-name=shiliu-wedding --branch=main",
     "deploy:portrait": "wrangler pages deploy .studio-dist/portrait --project-name=shiliu-portrait --branch=main",
     "check": "node scripts/check-release.mjs",
+    "check:astro": "astro check",
     "deploy:all": "bash scripts/deploy-all.sh"
   },
   "dependencies": {
     "astro": "^5.13.0"
   },
   "devDependencies": {
-    "sharp": "0.35.5"
+    "@astrojs/check": "^0.9.10",
+    "sharp": "0.35.5",
+    "typescript": "^5.9.3"
   }
 }

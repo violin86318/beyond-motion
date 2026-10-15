@@ -51,6 +51,7 @@ export function validateSites(records) {
 }
 
 export const sites = validateSites(rawSites);
+/** @param {{ category?: string, featured?: boolean }} [options] */
 export function getSites({ category, featured = false } = {}, records = sites) {
   return records.filter(site => site.status !== 'draft' && (!category || site.category === category) && (!featured || (site.featured && site.status === 'public')))
     .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));

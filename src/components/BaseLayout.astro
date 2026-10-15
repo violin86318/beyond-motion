@@ -11,7 +11,7 @@ const nav = [
   { url: '/sites/', label: '全部小站', paths: ['/sites'] },
   { url: '/about/', label: '关于', paths: ['/about'] },
 ];
-const isCurrent = paths => paths.some(path => Astro.url.pathname === path || Astro.url.pathname.startsWith(`${path}/`));
+const isCurrent = (paths: string[]) => paths.some((path: string) => Astro.url.pathname === path || Astro.url.pathname.startsWith(`${path}/`));
 ---
 <!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />

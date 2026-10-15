@@ -19,9 +19,10 @@ npm ci
 npm run dev -- --port 7101
 npm run build:all
 npm run check
+npm run check:astro
 ```
 
-`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。检查涵盖内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。
+`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run check` 检查已经构建的页面：内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。`npm run check:astro` 另做 Astro 类型诊断，覆盖 `.astro` 模板和相关脚本；它不读取 `dist/`，也不代替发布检查。
 
 ### 7102 静态预览
 
@@ -66,7 +67,7 @@ npm run preview -- --host 127.0.0.1 --port 7102
 - `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
 - URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...` 与主站同域，卡片会转成站内路径，并在当前窗口打开。子域名、Pages 备用域名和其他网站仍是独立外站，在新窗口打开，并保留“在新窗口打开”的提示。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址和独立外站。
 
-修改后执行 `npm run build:all && npm run check`。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
+修改后执行 `npm run build:all && npm run check`，再用 `npm run check:astro` 看类型诊断。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ## 发布文章
 
