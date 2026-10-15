@@ -66,7 +66,7 @@ function runAudit() {
   }
   if (highs.length > 0) detail.push(highs.slice(0, 30).join('\n'));
   if (counts && counts.high === 0 && counts.critical === 0) detail.push('没有 high 或 critical。');
-  detail.push('Astro 5 的已知公告留到单独的升级，这次只报告。');
+  detail.push('高危和严重项由 GitHub Actions 的 npm audit --audit-level=high 阻断。这里只把同一结果写进日志。');
   return {title: 'npm audit --audit-level=high（不阻断）', detail: detail.join('\n')};
 }
 

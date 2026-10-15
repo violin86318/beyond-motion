@@ -39,13 +39,17 @@ jobs:
         with:
           # 仓库没有 .nvmrc，package.json 也没有 engines。
           # 锁文件里会实际安装的最严要求是 undici >=22.19.0；
-          # Astro 5 为 18.20.8 || ^20.3.0 || >=22，顶层 sharp 0.35 为 >=20.9。
+          # Astro 7.3.8 为 >=22.12.0，顶层与内嵌 sharp 0.35.5 为 >=20.9。
           # Node 22 同时满足这些范围。
           node-version: "22"
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      # high 含 critical。没有有期限例外：当前审计结果里没有已知未修复项。
+      - name: Audit high and critical vulnerabilities
+        run: npm audit --audit-level=high
 
       - name: Build site and studio subsites
         run: npm run build:all
