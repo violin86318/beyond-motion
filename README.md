@@ -21,7 +21,7 @@ npm run build:all
 npm run verify
 ```
 
-`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`package.json` 里一旦出现 `check:astro` 或 `@astrojs/check`，类型检查就成为必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
+`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查。`npm audit --audit-level=high` 在 GitHub Actions 里是门禁，出现 high 或 critical 时作业失败；当前没有有期限的例外。`npm run verify` 仍把同一结果写入日志。`package.json` 里一旦出现 `check:astro` 或 `@astrojs/check`，类型检查就成为必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
 
 ## 发布文章
 
