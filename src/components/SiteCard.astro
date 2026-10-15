@@ -1,14 +1,15 @@
 ---
-import { categories } from '../lib/sites.mjs';
+import { categories, resolveSiteLink } from '../lib/sites.mjs';
 const { site } = Astro.props;
-const external = site.url.startsWith('https://');
+const link = resolveSiteLink(site.url);
+const external = link.external;
 const category = categories.find(category => category.id === site.category);
 ---
 <article class="site-card" data-site-id={site.id}>
-  <a href={site.url} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
+  <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
     <div class:list={['cover', `tone-${site.category}`]}>
       {site.cover ? <img src={site.cover} alt={site.coverAlt} width="900" height="600" loading="lazy" /> :
-        <div class="type-cover" aria-hidden="true"><span>VIOLIN / {category?.name}</span><strong>{site.name}</strong><span>{site.tags.join(' · ')}<i>↗</i></span></div>}
+        <div class="type-cover" aria-hidden="true"><span>VIOLIN / {category?.name}</span><strong>{site.name}</strong><span>{site.tags.join(' · ')}<i>{external ? '↗' : '→'}</i></span></div>}
     </div>
     <div class="meta"><span>{category?.name} / {site.tags.join(' · ')}</span>{site.status === 'archived' && <span class="archived">已归档</span>}</div>
     <h3>{site.name}<span aria-hidden="true">{external ? '↗' : '→'}</span></h3>

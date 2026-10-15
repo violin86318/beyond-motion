@@ -21,7 +21,22 @@ npm run build:all
 npm run check
 ```
 
-`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。检查涵盖内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。
+`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。检查涵盖内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。
+
+### 7102 静态预览
+
+静态预览打开的是已经构建好的主站，地址为 http://127.0.0.1:7102 。在前台启动即可，不要注册开机启动项、后台服务或进程守护。
+
+```sh
+npm run build
+npm run preview -- --host 127.0.0.1 --port 7102
+```
+
+需要连同两个石榴小站的产物一起准备时，把 `npm run build` 换成 `npm run build:all`。预览进程只提供主站 `dist/`。
+
+停止：回到运行预览的那个终端，按 Ctrl+C。进程结束后即停止，不需要另外的停止命令。
+
+重启电脑之后：预览不会自己恢复。进入项目目录，重新执行上面的构建和预览命令。`dist/` 还在且源码没有改动时，只执行预览那一行即可。
 
 ## 门户结构与新增小站
 
@@ -49,9 +64,9 @@ npm run check
 - 图片放进 `public/sites/`，引用如 `/sites/new-site.webp`，并填写 `coverAlt`。封面以 3:2 容器完整显示；`cover: null` 会生成站名排字封面。现有日刊、音乐和编译封面为固定的公开选图，不自动更新。
 - `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
 - `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
-- URL 采用完整 HTTPS 地址或站内路径。外站显示新窗口标记；重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类/首页一致和导航高亮。
+- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...` 与主站同域，卡片会转成站内路径，并在当前窗口打开。子域名、Pages 备用域名和其他网站仍是独立外站，在新窗口打开，并保留“在新窗口打开”的提示。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址和独立外站。
 
-修改后执行 `npm run build:all && npm run check`，用 `npm run dev -- --port 7101` 查看效果。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
+修改后执行 `npm run build:all && npm run check`。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ## 发布文章
 
