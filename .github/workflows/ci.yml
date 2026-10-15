@@ -1,0 +1,59 @@
+# 只做构建和发布检查。
+# 不部署、不读取密钥、不调用 wrangler 或 Cloudflare。
+# 只在作者电脑上才能完成的步骤不在这里运行，例如
+# .local-deploy/player-sources.json、MV 作品页部署、封面字体导出。
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-check:
+    name: Build and release checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # 构建不需要向 Astro 上报使用数据。
+      ASTRO_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          # 仓库没有 .nvmrc，package.json 也没有 engines。
+          # 锁文件里会实际安装的最严要求是 undici >=22.19.0；
+          # Astro 5 为 18.20.8 || ^20.3.0 || >=22，顶层 sharp 0.35 为 >=20.9。
+          # Node 22 同时满足这些范围。
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site and studio subsites
+        run: npm run build:all
+
+      - name: Release checks
+        run: npm run check
+
+      - name: Astro check when the script exists
+        run: |
+          present="$(node --input-type=module -e 'import {readFileSync} from "node:fs"; const pkg = JSON.parse(readFileSync("package.json","utf8")); process.stdout.write(pkg.scripts && pkg.scripts["check:astro"] ? "yes" : "no")')"
+          if [ "$present" = "yes" ]; then
+            npm run check:astro
+          else
+            echo "package.json has no check:astro script yet; skipping. It will run automatically once that script is on this branch."
+          fi
