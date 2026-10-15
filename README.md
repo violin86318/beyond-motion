@@ -18,11 +18,10 @@
 npm ci
 npm run dev -- --port 7101
 npm run build:all
-npm run check
-npm run check:astro
+npm run verify
 ```
 
-`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run check` 检查已经构建的页面：内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。`npm run check:astro` 另做 Astro 类型诊断，覆盖 `.astro` 模板和相关脚本；它不读取 `dist/`，也不代替发布检查。
+`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查，并核对小站清单、生成页面、封面、导航与 sitemap。`npm run check` 与 `npm run verify` 是同一条命令，都必须是 `node scripts/verify.mjs`，不能改成 `true`。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`check:astro` 必须是 `astro check`；这个脚本已经在 `package.json` 里，类型检查因此是必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
 
 ### 7102 静态预览
 
@@ -65,9 +64,9 @@ npm run preview -- --host 127.0.0.1 --port 7102
 - 图片放进 `public/sites/`，引用如 `/sites/new-site.webp`，并填写 `coverAlt`。封面以 3:2 容器完整显示；`cover: null` 会生成站名排字封面。现有日刊、音乐和编译封面为固定的公开选图，不自动更新。
 - `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
 - `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
-- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`、`tomato.1986318.xyz`。不在白名单里的主机会让构建和 `npm run check` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
+- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`、`tomato.1986318.xyz`。不在白名单里的主机会让构建和 `npm run verify` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
 
-修改后执行 `npm run build:all && npm run check`，再用 `npm run check:astro` 看类型诊断。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
+修改后执行 `npm run build:all && npm run verify`。`verify` 会检查已构建页面，并执行 `astro check`。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ## 发布文章
 
@@ -91,7 +90,7 @@ draft: true
 
 ```sh
 npm run build
-npm run check
+npm run verify
 wrangler whoami
 npm run deploy:main
 ```
@@ -158,7 +157,7 @@ wrangler pages deploy .local-deploy/players/lingdian-mv --project-name=lingdian-
 ```sh
 python3 scripts/curate-studios.py /path/to/小小东工作区
 npm run build:all
-npm run check
+npm run verify
 ```
 
 脚本读取婚礼原项目和写真原项目的既有精选项，生成缩略图和最大边 1200px 的 WebP；不修改原始文件。精选资料保留小小东来源说明。新增素材应核对授权和公开范围。
