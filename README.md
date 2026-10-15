@@ -18,10 +18,10 @@
 npm ci
 npm run dev -- --port 7101
 npm run build:all
-npm run check
+npm run verify
 ```
 
-`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。检查涵盖内部链接、图片路径、草稿排除、RSS、所有模板及 Pages 文件限制。
+`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`package.json` 里一旦出现 `check:astro` 或 `@astrojs/check`，类型检查就成为必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
 
 ## 发布文章
 
@@ -45,7 +45,7 @@ draft: true
 
 ```sh
 npm run build
-npm run check
+npm run verify
 wrangler whoami
 npm run deploy:main
 ```
@@ -112,7 +112,7 @@ wrangler pages deploy .local-deploy/players/lingdian-mv --project-name=lingdian-
 ```sh
 python3 scripts/curate-studios.py /path/to/小小东工作区
 npm run build:all
-npm run check
+npm run verify
 ```
 
 脚本读取婚礼原项目和写真原项目的既有精选项，生成缩略图和最大边 1200px 的 WebP；不修改原始文件。精选资料保留小小东来源说明。新增素材应核对授权和公开范围。

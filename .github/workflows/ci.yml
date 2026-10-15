@@ -29,6 +29,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # 完整历史用来判断 check:astro 是否曾经进入 package.json。
+          # 浅克隆只看到「删掉脚本」的那一次提交时，删除记录会丢。
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -46,14 +50,7 @@ jobs:
       - name: Build site and studio subsites
         run: npm run build:all
 
-      - name: Release checks
-        run: npm run check
-
-      - name: Astro check when the script exists
-        run: |
-          present="$(node --input-type=module -e 'import {readFileSync} from "node:fs"; const pkg = JSON.parse(readFileSync("package.json","utf8")); process.stdout.write(pkg.scripts && pkg.scripts["check:astro"] ? "yes" : "no")')"
-          if [ "$present" = "yes" ]; then
-            npm run check:astro
-          else
-            echo "package.json has no check:astro script yet; skipping. It will run automatically once that script is on this branch."
-          fi
+      # 直接跑脚本，不看 package.json 里有没有某个 npm script。
+      # 把 check / verify 改成 true 也过不了：verify.mjs 会核对脚本内容。
+      - name: Verify release checks
+        run: node scripts/verify.mjs

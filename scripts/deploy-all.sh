@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 wrangler whoami
 npm run build:all
-npm run check
+node scripts/verify.mjs
 npm run deploy:main
 npm run deploy:wedding
 npm run deploy:portrait
