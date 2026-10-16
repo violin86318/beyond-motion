@@ -85,7 +85,7 @@ async function main() {
 
   try {
     await runSelfTest();
-    sections.push({title: '检查器自测', detail: '链接、草稿、RSS 和类型检查脚本的夹具都按预期失败或通过。'});
+    sections.push({title: '检查器自测', detail: '链接、草稿、RSS、小站清单和类型检查脚本的夹具都按预期失败或通过。'});
   } catch (error) {
     failed = true;
     sections.push({title: '检查器自测失败', detail: error.message});
@@ -94,11 +94,15 @@ async function main() {
   try {
     const report = runReleaseChecks(root);
     const hosts = report.bundles.hosts;
+    if (!report.catalogue || typeof report.catalogue.entries !== 'number') {
+      throw new Error('发布检查没有返回小站清单结果');
+    }
     sections.push({
       title: '发布检查',
       detail: [
         `草稿 ${report.content.drafts.length} 篇，来自各集合 frontmatter 的 draft: true：${report.content.drafts.map((entry) => `${entry.collection}/${entry.id}`).join('、') || '无'}。`,
         `RSS 条数 ${report.content.expectedRss}，等于 RSS 页面所引用集合里的非草稿条目。`,
+        `小站清单 ${report.catalogue.entries} 条公开或归档条目：状态、地址、封面、生成页面、导航高亮和 sitemap 已核对。`,
         `外链资源主机（src / poster / srcset，只列出，不请求）：${formatHostList(hosts.resources)}。`,
         `外链 href 主机（只列出，不请求）：${formatHostList(hosts.links)}。`,
       ].join('\n'),

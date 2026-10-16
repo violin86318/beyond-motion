@@ -15,12 +15,15 @@
     "check": "node scripts/verify.mjs",
     "verify": "node scripts/verify.mjs",
     "test:checks": "node scripts/release-check.selftest.mjs",
+    "check:astro": "astro check",
     "deploy:all": "bash scripts/deploy-all.sh"
   },
   "dependencies": {
     "astro": "^5.13.0"
   },
   "devDependencies": {
-    "sharp": "0.35.5"
+    "@astrojs/check": "^0.9.10",
+    "sharp": "0.35.5",
+    "typescript": "^5.9.3"
   }
 }

@@ -10,7 +10,7 @@
 | 石榴婚礼（30 款） | https://wedding.beyondmotion.net | https://shiliu-wedding.pages.dev |
 | 石榴写真（24 组） | https://portrait.beyondmotion.net | https://shiliu-portrait.pages.dev |
 
-音乐入口现指向 https://violin-music.pages.dev 的「专辑听室」，首版收录 6 首作品、2 组主题选集。原有灵感音乐、番茄音乐报和风格听室继续独立运行。`music.beyondmotion.net` 的自定义域名尚待 DNS 配置和 HTTPS 验证，验证完成后再切换入口。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。海报小站保留在原工作区，暂不部署。
+门户音乐页是 `/music/`。页内「专辑听室」指向 https://music.beyondmotion.net ，写明 4 组主题选集、合计 16 首：六月之后 4 首、便利店，夜还亮着 6 首、记忆的暗房 3 首、尚未说出口 3 首。另有 6 首带手记的曲目链到同一听室。灵感音乐、番茄音乐报和风格听室继续独立运行，地址分别是 https://music.1986318.xyz/ 、https://tomato.1986318.xyz/ 、https://style.1986318.xyz/ 。首页的音乐按钮进入站内 `/music/`，不直接打开听室。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。视觉日刊「纸上片刻」以公开外站列入小站清单，地址为 https://zine-1986318.pages.dev/ 。
 
 ## 开发与检查
 
@@ -21,7 +21,52 @@ npm run build:all
 npm run verify
 ```
 
-`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`package.json` 里一旦出现 `check:astro` 或 `@astrojs/check`，类型检查就成为必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
+`npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查，并核对小站清单、生成页面、封面、导航与 sitemap。`npm run check` 与 `npm run verify` 是同一条命令，都必须是 `node scripts/verify.mjs`，不能改成 `true`。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`check:astro` 必须是 `astro check`；这个脚本已经在 `package.json` 里，类型检查因此是必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
+
+### 7102 静态预览
+
+静态预览打开的是已经构建好的主站，地址为 http://127.0.0.1:7102 。在前台启动即可，不要注册开机启动项、后台服务或进程守护。
+
+```sh
+npm run build
+npm run preview -- --host 127.0.0.1 --port 7102
+```
+
+需要连同两个石榴小站的产物一起准备时，把 `npm run build` 换成 `npm run build:all`。预览进程只提供主站 `dist/`。
+
+停止：回到运行预览的那个终端，按 Ctrl+C。进程结束后即停止，不需要另外的停止命令。
+
+重启电脑之后：预览不会自己恢复。进入项目目录，重新执行上面的构建和预览命令。`dist/` 还在且源码没有改动时，只执行预览那一行即可。
+
+## 门户结构与新增小站
+
+首页保留个人介绍、代表作品、最近文章与音乐，并从清单中取最多三个精选小站。导航固定为创作 `/works/`、阅读 `/reading/`、工具 `/tools/`、全部小站 `/sites/`、关于 `/about/`。旧文章、音乐、工作室和详情地址继续使用。
+
+新增独立小站时，只需在 `src/data/sites.json` 添加一条资料：
+
+```json
+{
+  "id": "new-site",
+  "name": "小站名称",
+  "description": "告诉访问者这里能看什么、做什么。",
+  "category": "reading",
+  "tags": ["编译"],
+  "url": "https://notes.beyondmotion.net/",
+  "cover": null,
+  "coverAlt": "",
+  "status": "draft",
+  "featured": false,
+  "order": 110
+}
+```
+
+- `category` 为 `creative`（创作）、`reading`（阅读）或 `tools`（工具）。对应栏目和总目录自动收录，无需增加一级导航。
+- 图片放进 `public/sites/`，引用如 `/sites/new-site.webp`，并填写 `coverAlt`。封面以 3:2 容器完整显示；`cover: null` 会生成站名排字封面。现有日刊、音乐和编译封面为固定的公开选图，不自动更新。
+- `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
+- `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
+- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`、`tomato.1986318.xyz`。不在白名单里的主机会让构建和 `npm run verify` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
+
+修改后执行 `npm run build:all && npm run verify`。`verify` 会检查已构建页面，并执行 `astro check`。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ## 发布文章
 

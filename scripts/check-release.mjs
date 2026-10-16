@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
 import {buildPrompt} from '../studio-sites/shared/prompt.js';
+import {checkSiteCatalogue} from './check-sites.mjs';
 import {
   checkContentPublication,
   inspectHtmlLinks,
@@ -84,6 +85,7 @@ export function runReleaseChecks(root = path.resolve(import.meta.dirname, '..'))
   const errors = [];
   let bundles;
   let content;
+  let catalogue;
   try {
     bundles = checkBundles(root);
   } catch (error) {
@@ -96,13 +98,18 @@ export function runReleaseChecks(root = path.resolve(import.meta.dirname, '..'))
     errors.push(error.message);
   }
   try {
+    catalogue = checkSiteCatalogue(root);
+  } catch (error) {
+    errors.push(error.message);
+  }
+  try {
     checkStudios(root);
     console.log('All 54 prompt templates passed.');
   } catch (error) {
     errors.push(error.message);
   }
   if (errors.length > 0) throw new Error(errors.join('\n\n'));
-  return {bundles, content};
+  return {bundles, content, catalogue};
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;

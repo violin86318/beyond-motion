@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
+import {assertSiteLinkRules} from './check-sites.mjs';
 import {
   assertFixedNpmScripts,
   assertHtmlLinks,
@@ -280,6 +281,17 @@ async function runRepoGuards() {
     assert.match(deploy, /npm run build:all/);
     assert.match(deploy, /node scripts\/verify\.mjs/);
     assert.doesNotMatch(deploy, /^npm run check$/m);
+  });
+  const release = fs.readFileSync(path.join(repoRoot, 'scripts/check-release.mjs'), 'utf8');
+  const sitesCheck = fs.readFileSync(path.join(repoRoot, 'scripts/check-sites.mjs'), 'utf8');
+  expectPass('小站清单挂在发布检查上，并覆盖页面、封面、导航和 sitemap', () => {
+    assert.match(release, /checkSiteCatalogue\(/);
+    assert.doesNotMatch(release, /signal-study/);
+    assert.match(sitesCheck, /data-site-id/);
+    assert.match(sitesCheck, /aria-current="page"/);
+    assert.match(sitesCheck, /sitemap\.xml/);
+    assert.match(sitesCheck, /封面不存在/);
+    assertSiteLinkRules();
   });
 }
 

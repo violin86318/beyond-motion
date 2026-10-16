@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import SiteCard from '../components/SiteCard.astro';
+import { getSites } from '../lib/sites.mjs';
+const sites = getSites({ category: 'tools' });
+---
+<BaseLayout title="工具" description="石榴婚礼、石榴写真与 violin 持续制作的小工具。">
+  <header class="page-head"><span class="eyebrow">Tools / 从需要开始</span><h1>把想法，<br/>做成顺手的工具。</h1><p>从一张邀请函、一组写真开始。挑选喜欢的样式，填写自己的信息，再把提示词带到自己使用的图像工具。</p></header>
+  <section><div class="section-title"><h2>可以用的小工具</h2><a href="/sites/#tools">在小站目录中查看 →</a></div>{sites.length ? <div class="site-grid">{sites.map(site => <SiteCard site={site} />)}</div> : <p class="empty">新的小工具还在准备。</p>}</section>
+  <aside class="studio-note"><span class="eyebrow">Shiliu Studio</span><h2>石榴工作室</h2><p>把生活里值得纪念的时刻，做得更有自己的样子。</p><a href="/studio/">认识石榴工作室 →</a></aside>
+</BaseLayout>
+<style>
+  .studio-note{margin-top:64px;border-top:1px solid var(--faint);padding-top:32px}.studio-note h2{font:700 28px var(--serif);margin:16px 0}.studio-note p{font-size:14px;line-height:1.9;color:var(--quiet);margin-bottom:22px}.studio-note a{font-size:13px}.empty{padding:24px 0;color:var(--quiet);font-size:14px}
+</style>
