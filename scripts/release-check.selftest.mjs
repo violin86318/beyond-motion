@@ -4,6 +4,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
 import {assertSiteLinkRules} from './check-sites.mjs';
+import {discoveryUrls} from './check-discovery.mjs';
 import {
   assertFixedNpmScripts,
   assertHtmlLinks,
@@ -297,6 +298,16 @@ async function runRepoGuards() {
 
 export async function runSelfTest() {
   failures.length = 0;
+  const origin = 'https://example.test';
+  const sitemap = '<urlset><url><loc>https://example.test/notes/public-one/</loc></url></urlset>';
+  const rss = '<rss><channel><link>https://example.test/notes/</link><item><link>https://example.test/notes/public-one/</link><guid isPermaLink="false">https://example.test/notes/public-one</guid><pubDate>Thu, 01 Oct 2026 00:00:00 GMT</pubDate></item></channel></rss>';
+  expectPass('发现文档使用最终地址，同时保留历史不透明 GUID', () => discoveryUrls(sitemap, rss, origin));
+  expectFail('sitemap 无尾斜杠', () => discoveryUrls(sitemap.replace('public-one/', 'public-one'), rss, origin), /尾斜杠/);
+  expectFail('RSS 无尾斜杠', () => discoveryUrls(sitemap, rss.replace('notes/</link>', 'notes</link>'), origin), /尾斜杠/);
+  expectFail('RSS permalink GUID 无尾斜杠', () => discoveryUrls(sitemap, rss.replace(' isPermaLink="false"', ''), origin), /尾斜杠/);
+  expectFail('发现文档误用 www', () => discoveryUrls(sitemap.replace('example.test', 'www.example.test'), rss, origin), /主域/);
+  expectFail('RSS 缺少日期', () => discoveryUrls(sitemap, rss.replace(/<pubDate>.*?<\/pubDate>/, ''), origin), /pubDate/);
+  expectFail('RSS 无效日期', () => discoveryUrls(sitemap, rss.replace('Thu, 01 Oct 2026 00:00:00 GMT', 'Invalid Date'), origin), /pubDate/);
   runLinkFixtures();
   runContentFixtures();
   runAstroFixtures();

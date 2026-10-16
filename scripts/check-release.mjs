@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
 import {buildPrompt} from '../studio-sites/shared/prompt.js';
 import {checkSiteCatalogue} from './check-sites.mjs';
+import {checkDiscovery} from './check-discovery.mjs';
 import {
   checkContentPublication,
   inspectHtmlLinks,
@@ -99,6 +100,11 @@ export function runReleaseChecks(root = path.resolve(import.meta.dirname, '..'))
   }
   try {
     catalogue = checkSiteCatalogue(root);
+  } catch (error) {
+    errors.push(error.message);
+  }
+  try {
+    checkDiscovery(root);
   } catch (error) {
     errors.push(error.message);
   }

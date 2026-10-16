@@ -162,7 +162,7 @@ export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..'
     assert(new RegExp(`<a[^>]+aria-current="page"[^>]*>${label}</a>`).test(html), `栏目高亮有误：${route}`);
   }
   const sitemap = readDist(root, 'sitemap.xml');
-  for (const route of ['reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
+  for (const route of ['reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}/</loc>`), `sitemap缺少${route}`);
   const entries = getSites().length;
   console.log(`Site catalogue: ${entries} entries, status/URL/cover checks passed.`);
   return {entries};
