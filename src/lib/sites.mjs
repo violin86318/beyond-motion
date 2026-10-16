@@ -10,7 +10,6 @@ export const allowedExternalHosts = [
   'horizon.1986318.xyz',
   'music.1986318.xyz',
   'style.1986318.xyz',
-  'tomato.1986318.xyz',
 ];
 
 export function isAllowedSiteHost(hostname) {
@@ -20,9 +19,10 @@ export function isAllowedSiteHost(hostname) {
 }
 
 export const categories = [
-  { id: 'creative', name: '创作', description: '影像之外，还有音乐、纸面与不断生长的创作实验。' },
-  { id: 'reading', name: '阅读', description: '编译长文与科技资讯，沿着不同的视角继续追问。' },
-  { id: 'tools', name: '工具', description: '把想法做成可使用的小产品，从一次具体的需要开始。' },
+  { id: 'visual', name: '图像', url: '/visuals/', description: '植物、纸面与日常观察，收进可以慢慢翻看的视觉创作。' },
+  { id: 'music', name: '音乐', url: '/music/', description: '专辑听室、灵感音乐与风格听室，沿三种入口听见不同的表达。' },
+  { id: 'reading', name: '阅读', url: '/reading/', description: '编译长文与科技资讯，沿着不同的视角继续追问。' },
+  { id: 'tools', name: '工具', url: '/tools/', description: '把想法做成可使用的小产品，从一次具体的需要开始。' },
 ];
 
 // Collapse duplicate slashes and drop a trailing slash before dedupe.
@@ -62,6 +62,7 @@ export function validateSites(records) {
   for (const site of records) {
     const fail = message => { throw new Error(`站点 ${site?.id ?? '(无ID)'}：${message}`); };
     if (!site || typeof site !== 'object') fail('资料无效');
+    if (site.id === 'tomato-music' || /番茄音乐报/.test(site.name ?? '')) fail('主站已明确排除此小站');
     if (typeof site.id !== 'string' || !/^[a-z][a-z0-9-]*$/.test(site.id) || ids.has(site.id)) fail('ID无效或重复');
     ids.add(site.id);
     for (const key of ['name', 'description']) if (typeof site[key] !== 'string' || !site[key].trim()) fail(`缺少${key}`);

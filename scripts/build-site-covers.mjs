@@ -70,20 +70,6 @@ covers.set('inspiration-music', frame('灵感音乐：一份从阅读、观察�
 `));
 
 // Tomato as a record: the publication's five musical tastes, not a news feed.
-const tomato = `<g transform="translate(873 389) rotate(10)">${circle(0,0,210,'#922d24')}${circle(-10,-12,198,'#e66b45')}
-  ${Array.from({length:9},(_,i)=>circle(-10,-12,77+i*12,'none','stroke="#a53d2c" stroke-width="2"')).join('')}
-  ${circle(-10,-12,67,'#f1db9d')}${circle(-10,-12,10,'#ab3c2a')}
-  <path d="M-29 -190L-99 -211L-43 -235L-50 -289L-4 -247L50 -278L33 -227L93 -202L30 -197L1 -151Z" fill="#344e38"/>
-  <path d="M41 -133Q99 -122 121 -71" fill="none" stroke="#f2a17b" stroke-width="9" stroke-linecap="round"/></g>`;
-covers.set('tomato-music', frame('番茄音乐报：一颗唱片番茄与五种音乐口味', '#c44d36', `
-  ${rect(28,28,1144,744,'none','stroke="#ebc09a"')}${label('TOMATO MUSIC DAILY',63,90,'#f5dfba')}
-  ${line(65,120,1135,120,'#e7a783')}${text('番茄',57,288,113,'#ffebc8')}${text('音乐报',57,416,102,'#ffebc8')}
-  ${text('给日常，添一点声音。',64,510,32,'#ffe2b6')}${tomato}
-  ${line(64,633,1136,633,'#e7a783')}
-  ${['广场舞','洗脑流行','伤感情绪','国风古风','家乡与励志'].map((s,i)=>text(s,65+i*219,697,27,'#ffe8c0',sans)).join('')}
-  ${label('PICK YOUR MOOD. PRESS PLAY.',65,745,'#f5dfba',16)}
-`));
-
 // A rhythm of real sleeves; each remains a separate genre exploration.
 let sleeves = '';
 for (let i = 0; i < 3; i++) {

@@ -7,9 +7,10 @@ const sites = getSites();
 <BaseLayout title="全部小站" description="violin 的小站目录：视觉日刊、原创音乐、编译阅读、科技资讯与石榴工具。">
   <header class="page-head"><span class="eyebrow">The constellation / 小站目录</span><h1>许多小站，<br/>同一个创作现场。</h1><p>有些想法变成一首歌，有些长成一本日刊，还有些成了顺手的工具。这里收下它们的入口，各自在自己的地方继续生长。</p></header>
   <nav class="category-links" aria-label="小站分类">{categories.map(category => <a href={`#${category.id}`}>{category.name}<span>{sites.filter(site => site.category === category.id).length.toString().padStart(2, '0')}</span>↓</a>)}<span class="total">共 {sites.length} 个小站 · 外站在新窗口打开</span></nav>
+  <span id="creative" aria-hidden="true"></span>
   {categories.map((category, i) => {
     const entries = sites.filter(site => site.category === category.id);
-    const sectionUrl = { creative: '/works/', reading: '/reading/', tools: '/tools/' }[category.id];
+    const sectionUrl = category.url;
     return <section id={category.id} class="category"><div class="section-title"><h2><small>0{i + 1}</small>{category.name}</h2><a href={sectionUrl}>进入{category.name}栏目 →</a></div><p class="category-intro">{category.description}</p>{entries.length ? <div class="site-grid">{entries.map(site => <SiteCard site={site} />)}</div> : <p class="empty">这个方向还在准备，新的小站会收在这里。</p>}</section>;
   })}
 </BaseLayout>

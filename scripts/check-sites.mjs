@@ -20,6 +20,8 @@ export function assertSiteLinkRules() {
     assert.throws(() => validateSites([{ ...sample, url }]), /地址|HTTPS/);
   }
   const entry = (id, url) => ({ ...sample, id, url, cover: null, coverSmall: null, coverAlt: '', featured: false });
+  assert.throws(() => validateSites([entry('tomato-music', 'https://music.beyondmotion.net/')]), /明确排除/);
+  assert.throws(() => validateSites([{ ...sample, name: '番茄音乐报' }]), /明确排除/);
   for (const [url, external, href] of [
     ['/reading/', false, '/reading/'],
     ['/works/dingying-fix', false, '/works/dingying-fix'],
@@ -33,7 +35,6 @@ export function assertSiteLinkRules() {
     ['https://zine-1986318.pages.dev/', true, 'https://zine-1986318.pages.dev/'],
     ['https://www.beyondmotion.net/about/', true, 'https://www.beyondmotion.net/about/'],
     ['https://music.1986318.xyz/', true, 'https://music.1986318.xyz/'],
-    ['https://tomato.1986318.xyz/', true, 'https://tomato.1986318.xyz/'],
     ['https://style.1986318.xyz/', true, 'https://style.1986318.xyz/'],
     ['https://horizon.1986318.xyz/', true, 'https://horizon.1986318.xyz/'],
     ['https://aihot.1986318.xyz/', true, 'https://aihot.1986318.xyz/'],
@@ -44,6 +45,7 @@ export function assertSiteLinkRules() {
     if (external) assert.equal(link.host, new URL(url).hostname, url);
   }
   for (const url of [
+    'https://tomato.1986318.xyz/',
     'https://example.com/outside/',
     'https://beyond-motion.pages.dev/reading/',
     'https://evil.pages.dev/',
@@ -136,6 +138,23 @@ function assertCardLink(html, site) {
   }
 }
 
+export function assertPortalExclusions(text, context = '公开内容') {
+  assert(!/番茄音乐报|tomato-music|tomato\.1986318\.xyz/i.test(text), `${context}包含主站明确排除的小站`);
+}
+
+export function checkPortalExclusions(root) {
+  assertPortalExclusions(JSON.stringify(sites), '站点清单');
+  const visit = dir => {
+    for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+      const file = path.join(dir, item.name);
+      assertPortalExclusions(path.relative(root, file), '公开资源路径');
+      if (item.isDirectory()) visit(file);
+      else if (/\.(?:html|xml|json|js|css|svg|txt)$/i.test(item.name)) assertPortalExclusions(fs.readFileSync(file, 'utf8'), path.relative(root, file));
+    }
+  };
+  visit(path.join(root, 'dist'));
+}
+
 // Generated pages, covers, nav highlight, and sitemap. Requires npm run build:all.
 export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..')) {
   assertSiteLinkRules();
@@ -153,27 +172,25 @@ export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..'
   }
   const readPage = route => readDist(root, `${route ? `${route}/` : ''}index.html`);
   const cardIds = html => [...html.matchAll(/data-site-id="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(cardIds(readPage('')), getSites({ featured: true }).slice(0, 3).map(site => site.id), '首页精选须与清单一致');
-  for (const [category, route] of [['creative', 'works'], ['reading', 'reading'], ['tools', 'tools']]) {
+  assert.deepEqual(cardIds(readPage('')), [], '首页不再混排小站内容');
+  assert(!/data-(?:work|note)-id=/.test(readPage('')), '首页不再混排作品或文章明细');
+  for (const route of ['works', 'visuals', 'music']) assert(readPage('').includes(`data-medium-entry=`) && readPage('').includes(`href="/${route}/"`), `首页缺少${route}分类入口`);
+  assert.deepEqual(cardIds(readPage('works')), [], '影像页不得混排音乐和日刊小站');
+  for (const [category, route] of [['visual', 'visuals'], ['music', 'music'], ['reading', 'reading'], ['tools', 'tools'], ['tools', 'studio']]) {
     const html = readPage(route);
     assert.deepEqual(cardIds(html), getSites({ category }).map(site => site.id), `${route}须与目录同源`);
     for (const site of getSites({ category })) assertCardLink(html, site);
   }
-  for (const site of getSites({ featured: true }).slice(0, 3)) assertCardLink(readPage(''), site);
-  for (const [route, expected] of [
-    ['music', getSites({ category: 'creative' }).filter(site => site.tags.includes('音乐'))],
-    ['studio', getSites({ category: 'tools' })],
-  ]) {
-    const html = readPage(route);
-    assert.deepEqual(cardIds(html), expected.map(site => site.id), `${route}须与目录同源`);
-    for (const site of expected) assertCardLink(html, site);
-  }
-  for (const [route, label] of [['works','创作'], ['works/dingying-fix','创作'], ['music','创作'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
+  const music = readPage('music');
+  assert.deepEqual([...music.matchAll(/data-music-entry-id="([^"]+)"/g)].map(match => match[1]), getSites({ category: 'music' }).map(site => site.id), '音乐首屏三个同级入口须与清单一致');
+  assert(music.includes('class="disc"'), '音乐页须保留唱片Hero');
+  checkPortalExclusions(root);
+  for (const [route, label] of [['works','影像'], ['works/dingying-fix','影像'], ['visuals','图像'], ['music','音乐'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
     const html = readPage(route);
     assert(new RegExp(`<a[^>]+aria-current="page"[^>]*>${label}</a>`).test(html), `栏目高亮有误：${route}`);
   }
   const sitemap = readDist(root, 'sitemap.xml');
-  for (const route of ['reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
+  for (const route of ['visuals', 'reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
   const entries = getSites().length;
   console.log(`Site catalogue: ${entries} entries, status/URL/cover checks passed.`);
   return {entries};

@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
-import {assertSiteLinkRules} from './check-sites.mjs';
+import {assertSiteLinkRules, assertPortalExclusions, checkPortalExclusions} from './check-sites.mjs';
 import {checkSiteCoverArtwork} from './check-site-covers.mjs';
 import sharp from 'sharp';
 import {
@@ -297,6 +297,19 @@ async function runRepoGuards() {
   });
 }
 
+function runPortalExclusionFixtures() {
+  expectPass('Given普通图像音乐文案，When检查公开内容，Then正常通过', () => assertPortalExclusions('纸上片刻 / 专辑听室 / 灵感音乐 / 风格听室'));
+  for (const text of ['番茄音乐报', '<meta content="番茄音乐报">', 'https://tomato.1986318.xyz/', '/sites/covers/tomato-music-600.webp']) {
+    expectFail('Given明确排除的站点，When重新出现在公开内容，Then检查失败', () => assertPortalExclusions(text), /明确排除/);
+  }
+  withTemp(dir => {
+    writeFile(path.join(dir, 'dist/music/index.html'), '<p>灵感音乐</p>');
+    expectPass('Given干净产物，Then公开内容检查通过', () => checkPortalExclusions(dir));
+    writeFile(path.join(dir, 'dist/nested/stale.js'), 'const site="番茄音乐报"');
+    expectFail('Given遗漏的嵌套脚本，When扫描全部产物，Then拦住旧站文案', () => checkPortalExclusions(dir), /明确排除/);
+  });
+}
+
 async function runCoverFixtures() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cover-check-'));
   try {
@@ -324,6 +337,7 @@ export async function runSelfTest() {
   runLinkFixtures();
   runContentFixtures();
   runAstroFixtures();
+  runPortalExclusionFixtures();
   await runRepoGuards();
   await runCoverFixtures();
   if (failures.length > 0) {

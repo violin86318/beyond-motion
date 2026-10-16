@@ -10,7 +10,7 @@
 | 石榴婚礼（30 款） | https://wedding.beyondmotion.net | https://shiliu-wedding.pages.dev |
 | 石榴写真（24 组） | https://portrait.beyondmotion.net | https://shiliu-portrait.pages.dev |
 
-门户音乐页是 `/music/`。页内「专辑听室」指向 https://music.beyondmotion.net ，写明 4 组主题选集、合计 16 首：六月之后 4 首、便利店，夜还亮着 6 首、记忆的暗房 3 首、尚未说出口 3 首。另有 6 首带手记的曲目链到同一听室。灵感音乐、番茄音乐报和风格听室继续独立运行，地址分别是 https://music.1986318.xyz/ 、https://tomato.1986318.xyz/ 、https://style.1986318.xyz/ 。首页的音乐按钮进入站内 `/music/`，不直接打开听室。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。视觉日刊「纸上片刻」以公开外站列入小站清单，地址为 https://zine-1986318.pages.dev/ 。
+门户音乐页是 `/music/`。页内「专辑听室」指向 https://music.beyondmotion.net ，写明 4 组主题选集、合计 16 首：六月之后 4 首、便利店，夜还亮着 6 首、记忆的暗房 3 首、尚未说出口 3 首。另有 6 首带手记的曲目链到同一听室。灵感音乐和风格听室与专辑听室在音乐首屏同级展示，地址为 https://music.1986318.xyz/ 和 https://style.1986318.xyz/ 。首页的音乐按钮进入站内 `/music/`，不直接打开听室。视频作品已接入《定影》、蓝晒相册、《退格键》和《零点前三十秒》。视觉日刊「纸上片刻」以公开外站列入小站清单，地址为 https://zine-1986318.pages.dev/ 。
 
 ## 开发与检查
 
@@ -40,7 +40,7 @@ npm run preview -- --host 127.0.0.1 --port 7102
 
 ## 门户结构与新增小站
 
-首页保留个人介绍、代表作品、最近文章与音乐，并从清单中取最多三个精选小站。导航固定为创作 `/works/`、阅读 `/reading/`、工具 `/tools/`、全部小站 `/sites/`、关于 `/about/`。旧文章、音乐、工作室和详情地址继续使用。
+首页保留个人品牌Hero和分类入口。导航固定为影像 `/works/`、图像 `/visuals/`、音乐 `/music/`、阅读 `/reading/`、工具 `/tools/`、全部小站 `/sites/`、关于 `/about/`。旧文章、音乐、工作室和详情地址继续使用；`/works/` 只呈现影像，纸上片刻从图像页进入。
 
 新增独立小站时，只需在 `src/data/sites.json` 添加一条资料：
 
@@ -60,23 +60,23 @@ npm run preview -- --host 127.0.0.1 --port 7102
 }
 ```
 
-- `category` 为 `creative`（创作）、`reading`（阅读）或 `tools`（工具）。对应栏目和总目录自动收录，无需增加一级导航。
+- `category` 为 `visual`（图像）、`music`（音乐）、`reading`（阅读）或 `tools`（工具）。对应栏目和总目录自动收录，无需增加一级导航。
 - 公开小站需要专门设计的 **3:2 横版入口封面**，不能把竖海报或方形单曲缩在横框中补边。准备 1200×800 和 600×400 两档，放进 `public/sites/covers/`；`cover` 指向大图，`coverSmall` 指向小图，并填写描述画面的 `coverAlt`。卡片通过 `srcset` 按显示宽度和屏幕密度选图，手机也保持 3:2。`cover: null` 的站名排字仅供草稿准备，公开交付检查不接受占位。
-- `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入首页精选。
-- `featured: true` 进入首页候选；按 `order` 从小到大取前三条，同序按 ID 排序。条目在所有页面共用 `SiteCard`。
-- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`、`tomato.1986318.xyz`。不在白名单里的主机会让构建和 `npm run verify` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与首页一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
+- `status` 为 `public` 时公开；`draft` 不展示；`archived` 在目录与栏目中标记“已归档”，不进入精选推荐。
+- `featured` 保留为编辑精选标记，不会让条目自动铺到首页。栏目和目录按 `order` 从小到大排序，同序按 ID 排序；共用 `SiteCard`。
+- URL 采用站内路径（如 `/reading/`）或完整 HTTPS 地址。`https://beyondmotion.net/...`（不含 `www` 和其他子域名）与主站同域，卡片转成站内路径，并在当前窗口打开。外链主机必须在白名单内：`beyondmotion.net` 及其子域名，以及清单里已经在用的 `zine-1986318.pages.dev`、`aihot.1986318.xyz`、`horizon.1986318.xyz`、`music.1986318.xyz`、`style.1986318.xyz`。不在白名单里的主机会让构建和 `npm run verify` 失败；`pages.dev` 不是整段后缀放行。外链卡片在新窗口打开，保留“在新窗口打开”的提示，并显示目标主机名。去重前会折叠路径中的重复斜杠并去掉尾斜杠，因此 `https://music.beyondmotion.net/album//` 与 `https://music.beyondmotion.net/album` 视为同一地址。重复 ID、重复地址或非法 URL 会使构建失败。检查还覆盖封面存在、分类与目录一致、导航高亮，以及相对地址、同域完整地址、白名单外链和被拒绝的主机。
 
 修改后执行 `npm run build:all && npm run verify`。`verify` 会检查已构建页面，并执行 `astro check`。开发时用 `npm run dev -- --port 7101`；要看构建结果时，按上面的 7102 静态预览启动。子站的内容和功能继续在各自项目维护；单篇文章、单首歌和单件作品仍使用原集合。代码提交与正式发布分开执行。
 
 ### 入口封面的维护
 
-现有十站封面由 `scripts/build-site-covers.mjs` 编排：真实日刊纸页、四张专辑选集、风格歌曲封面、公开文章配图、婚礼/写真样片，以及根据小站内容绘制的声音日记、番茄唱片、信息雷达和 AI 报纸插画。不是子站截图，也不自动刷新。来源与选题记录在 `scripts/site-cover-assets/sources.json`，新增的公开素材放在该目录；已有素材继续引用原目录。
+现有九站封面由 `scripts/build-site-covers.mjs` 编排：真实日刊纸页、四张专辑选集、风格歌曲封面、公开文章配图、婚礼/写真样片，以及根据小站内容绘制的声音日记、信息雷达和 AI 报纸插画。不是子站截图，也不自动刷新。来源与选题记录在 `scripts/site-cover-assets/sources.json`，新增的公开素材放在该目录；已有素材继续引用原目录。
 
 修改构图或源图后运行 `npm run covers:sites`，再构建并检查电脑及手机预览。使用现有 sharp 离线输出 WebP，不调用图像生成服务。不同分辨率共用构图；若将来出现真正不同的展示画幅，应另设计该画幅，再接入 `picture` 的媒体条件，不能依靠强裁切。普通文章、单曲和视频自己的封面不受入口封面影响。
 
-主站的首页、创作、阅读、工具、全部小站、音乐档案和旧工作室入口共用这份站点资料；改站点名称、地址、介绍和封面只需修改一处。`StudioCards` 与音乐页复用 `SiteCard`，归档/草稿规则相同。四张专辑与六首创作手记的深层链接保留在音乐档案。原创文章在首页、阅读页与文章目录共用 `NoteList` 的文字索引，不预留空图片框；影片在首页与作品库共用 `WorkCard`，列表封面保留 16:9，竖屏作品的播放封面单独使用 9:16。
+图像、音乐、阅读、工具、全部小站和旧工作室入口共用这份站点资料；改站点名称、地址、介绍和封面只需修改一处。`StudioCards` 与音乐页复用 `SiteCard`，归档/草稿规则相同。四张专辑与六首创作手记的深层链接保留在音乐档案。原创文章在阅读页与文章目录共用 `NoteList` 的文字索引，不预留空图片框；影片在影像页使用 `WorkCard`，列表封面保留 16:9，竖屏作品的播放封面单独使用 9:16。
 
-`verify` 还会实际解码20张入口封面，检查各站独立资源与两档尺寸；检查器自测覆盖缺图、重复、错误画幅、损坏文件。
+`verify` 还会实际解码18张入口封面，检查各站独立资源与两档尺寸；检查器自测覆盖缺图、重复、错误画幅、损坏文件。
 
 ## 发布文章
 
@@ -94,7 +94,7 @@ draft: true
 正文从这里开始。
 ```
 
-写完并检查后，把 `draft` 改为 `false`。文章目录、首页最近文章、RSS 和 sitemap 会随构建更新。图片放在 `public/notes/<文章名>/`，正文以 `/notes/<文章名>/cover.webp` 引用。请先压缩图片，优先 WebP。
+写完并检查后，把 `draft` 改为 `false`。文章目录、阅读页、RSS 和 sitemap 会随构建更新。图片放在 `public/notes/<文章名>/`，正文以 `/notes/<文章名>/cover.webp` 引用。请先压缩图片，优先 WebP。
 
 只更新主站时：
 
@@ -130,9 +130,9 @@ orientation: landscape # landscape 横屏 / portrait 竖屏
 创作手记。
 ```
 
-图片、音频等放到 `public/w/<slug>/`。网页作品可用外部 `url` 或本地 `index.html`；视频可用外部 `url` 或本地 `video.mp4`；音乐可用本地 `audio.mp3`。只在作品可用后移除草稿状态。首页《定影》主视觉为人工编排；其他 `featured: true` 的作品自动进入「继续看片」区域。
+图片、音频等放到 `public/w/<slug>/`。网页作品可用外部 `url` 或本地 `index.html`；视频可用外部 `url` 或本地 `video.mp4`；音乐可用本地 `audio.mp3`。只在作品可用后移除草稿状态。公开的 live/video 作品进入影像页，公开的 image 作品进入图像页，按日期排序；首页不自动展开作品。
 
-封面采用独立的主题构图，不从音乐时间线任意截帧。首页与作品列表统一用 16:9；竖屏作品另用 `stagePoster` 的 9:16 构图。播放按钮在封面之外，加载前后保留画面比例。「返回封面」会移除 iframe 并停止内嵌作品。分享图使用同一横版 JPEG。
+封面采用独立的主题构图，不从音乐时间线任意截帧。影片列表与分享图采用 16:9；竖屏作品另用 `stagePoster` 的 9:16 构图。播放按钮在封面之外，加载前后保留画面比例。「返回封面」会移除 iframe 并停止内嵌作品。分享图使用同一横版 JPEG。
 
 四张封面的可编辑构图在 `scripts/build-work-covers.mjs`；运行 `node scripts/build-work-covers.mjs` 会重新生成 `public/w/` 中的 `cover-bilibili.svg` 与 JPEG，并生成本机 `.local-deploy/bilibili-covers/` 的上传成品、裁切预览与离线对照页。需要本机有中文字体。页面上这些图是标题封面，不是 MV 截帧。
 
@@ -191,3 +191,10 @@ npm run deploy:all
 网站不依赖试用积分或首次注册优惠。Product Pass 应按服务商当前条款使用，更换账号不等于重新获得首次用户资格。优惠结束后，先检查实际用量；静态门户无需为了优惠每年迁移账号。
 
 Pages 控制台保留部署版本，可回滚上一版。上线前记录的旧 DNS 在本机 `.local-deploy/dns-before.json`，该目录不上传到 Git。
+
+
+### 页面与收录边界
+
+首页只展示个人品牌 Hero 与分类入口，不混排作品、文章或小站明细。主导航分为影像 `/works/`、图像 `/visuals/`、音乐 `/music/`、阅读、工具、全部小站与关于；旧作品与文章详情地址保留。图像页收录纸上片刻及后续正式公开的图像作品，草稿不公开。音乐页保留大标题与唱片Hero，专辑听室、灵感音乐、风格听室位于同一组首屏入口和同一网格。四合集与六手记链接继续保留。
+
+主站明确不收录番茄音乐报。不要重新添加该名称、站点记录、域名或派生封面；`validateSites` 与 `verify` 对此有负向检查，扫描公开页面、元数据、嵌套脚本和资源路径。独立站本身由原项目维护，不受主站入口移除影响。

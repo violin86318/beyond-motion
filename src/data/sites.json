@@ -3,7 +3,7 @@
     "id": "paper-moments",
     "name": "纸上片刻",
     "description": "把日常的节气、植物与心情，收进一页视觉日刊。翻一页，停留片刻。",
-    "category": "creative",
+    "category": "visual",
     "tags": [
       "视觉",
       "日刊"
@@ -20,7 +20,7 @@
     "id": "album-room",
     "name": "专辑听室",
     "description": "按主题编排的原创歌曲选集。听音乐，也读一首歌背后的创作手记。",
-    "category": "creative",
+    "category": "music",
     "tags": [
       "音乐",
       "精选专辑"
@@ -37,7 +37,7 @@
     "id": "inspiration-music",
     "name": "灵感音乐",
     "description": "从生活与想法中长出的歌曲，收录完整曲库，随时找一首来听。",
-    "category": "creative",
+    "category": "music",
     "tags": [
       "音乐",
       "灵感"
@@ -51,27 +51,10 @@
     "coverSmall": "/sites/covers/inspiration-music-600.webp"
   },
   {
-    "id": "tomato-music",
-    "name": "番茄音乐报",
-    "description": "五种音乐口味，把热闹、想念与家乡的故事唱给日常听。按今天的心情，选一首跟着唱。",
-    "category": "creative",
-    "tags": [
-      "音乐",
-      "日常情绪"
-    ],
-    "url": "https://tomato.1986318.xyz/",
-    "cover": "/sites/covers/tomato-music-1200.webp",
-    "coverAlt": "番茄音乐报入口封面：番茄唱片与五种音乐口味",
-    "status": "public",
-    "featured": false,
-    "order": 40,
-    "coverSmall": "/sites/covers/tomato-music-600.webp"
-  },
-  {
     "id": "style-room",
     "name": "风格听室",
     "description": "从不同音乐风格出发的声音实验，按口味探索，也允许偶遇。",
-    "category": "creative",
+    "category": "music",
     "tags": [
       "音乐",
       "风格实验"

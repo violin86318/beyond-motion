@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../components/BaseLayout.astro';
+import SiteCard from '../components/SiteCard.astro';
+import WorkCard from '../components/WorkCard.astro';
+import { getSites } from '../lib/sites.mjs';
+const visualSites = getSites({ category: 'visual' });
+const works = (await getCollection('works', ({ data }) => !data.draft && data.type === 'image'))
+  .sort((a,b) => b.data.date.localeCompare(a.data.date) || a.id.localeCompare(b.id));
+---
+<BaseLayout title="图像" description="violin 的图像与纸面创作：从纸上片刻视觉日刊开始，看看日常里的植物、节气与观察。">
+  <header class="page-head"><p class="eyebrow">Image / A moment on paper</p><h1>把日常，<br/>留在一页纸上。</h1><p>植物、节气、一次偶然的观察。让画面慢下来，也让目光停留片刻。</p></header>
+  <section aria-labelledby="visual-sites-heading"><div class="section-title"><h2 id="visual-sites-heading">纸面与日刊</h2><a href="/sites/#visual">查看图像小站 →</a></div><div class:list={['visual-sites', {'single': visualSites.length === 1}]}>{visualSites.map(site=><SiteCard site={site} sizes="(max-width: 720px) calc(100vw - 44px), (max-width: 1320px) calc((100vw - 144px) / 2), 588px" />)}{!visualSites.length && <p>新的视觉日刊正在准备。</p>}</div></section>
+  {works.length > 0 && <section class="visual-works"><div class="section-title"><h2>图像作品</h2><span class="annot">{works.length} 件作品</span></div>{works.map((work,index)=><WorkCard no={String(index+1).padStart(3,'0')} work={work} />)}</section>}
+</BaseLayout>
+<style>
+  .visual-sites{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}.visual-sites.single{max-width:588px;grid-template-columns:minmax(0,1fr)}.visual-works{margin-top:64px}
+  @media(max-width:720px){.visual-sites{grid-template-columns:minmax(0,1fr)}}
+</style>

@@ -1,17 +1,20 @@
 ---
 import '../styles/tokens.css';
-interface Props { title: string; description?: string; image?: string; }
-const { title, image = '/w/dingying-fix/cover-bilibili.jpg', description = 'violin 的创作现场：影像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
+interface Props { title: string; description?: string; image?: string; section?: string; }
+const { title, section, image = '/w/dingying-fix/cover-bilibili.jpg', description = 'violin 的创作现场：影像、图像、音乐、文章，以及把想法变成作品的小工具。言上文化 · Beyond-Motion。' } = Astro.props;
 const year = new Date().getFullYear();
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const nav = [
-  { url: '/works/', label: '创作', paths: ['/works', '/music'] },
+  { url: '/works/', label: '影像', paths: ['/works'] },
+  { url: '/visuals/', label: '图像', paths: ['/visuals'] },
+  { url: '/music/', label: '音乐', paths: ['/music'] },
   { url: '/reading/', label: '阅读', paths: ['/reading', '/notes'] },
   { url: '/tools/', label: '工具', paths: ['/tools', '/studio'] },
   { url: '/sites/', label: '全部小站', paths: ['/sites'] },
   { url: '/about/', label: '关于', paths: ['/about'] },
 ];
-const isCurrent = (paths: string[]) => paths.some((path: string) => Astro.url.pathname === path || Astro.url.pathname.startsWith(`${path}/`));
+const activePath = section ?? Astro.url.pathname;
+const isCurrent = (paths: string[]) => paths.some((path: string) => activePath === path || activePath.startsWith(`${path}/`));
 ---
 <!doctype html><html lang="zh-CN"><head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />

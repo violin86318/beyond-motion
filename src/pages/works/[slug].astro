@@ -31,11 +31,11 @@ const videoFile = type === 'video' && has('video.mp4') ? `/w/${work.id}/video.mp
 const audioFile = type === 'music' && has('audio.mp3') ? `/w/${work.id}/audio.mp3` : null;
 const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000, 7);
 ---
-<BaseLayout title={title} description={description} image={poster}>
+<BaseLayout title={title} description={description} image={poster} section={type === 'image' ? '/visuals' : type === 'music' ? '/music' : '/works'}>
   <article class="detail">
     <header class="head" data-reveal>
       <div class="row annot">
-        <a href="/works" class="back">← 作品库</a>
+        <a href={type === 'image' ? '/visuals/' : type === 'music' ? '/music/' : '/works/'} class="back">← {type === 'image' ? '图像' : type === 'music' ? '音乐' : '影像作品'}</a>
         <span>NO.{no}</span>
         <span class:list={['tag', { live: type === 'live' }]}>{TAG[type]}</span>
       </div>
