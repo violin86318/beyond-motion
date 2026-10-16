@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+const base = '/projects/ashi';
+const expressions = [
+  {id:'curious', name:'嗯？', text:'先停一下，看看问题出在哪里。'},
+  {id:'thinking', name:'思考中', text:'把复杂的东西，一点点拆开。'},
+  {id:'note', name:'先记下来', text:'留一条线索，下次也许用得上。'},
+  {id:'made-it', name:'成了！', text:'一个小实验，终于有了回应。'},
+];
+const scenes = [
+  {id:'workflow', name:'拆工作流', text:'把眼前的步骤摊开，试着找到它们之间的联系。'},
+  {id:'discovery', name:'灵感来了', text:'两个原本不相干的想法，忽然在脑海里接上了。'},
+];
+---
+<BaseLayout title="阿拾 Ashi" description="认识阿拾：一个喜欢把复杂东西拆开研究，总想做出点东西的小创作者。violin 的原创角色项目。" image={`${base}/master-1200.webp`}>
+  <a class="back" href="/">← 返回首页</a>
+  <header class="ashi-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Ashi / A character by violin</p>
+      <h1>阿拾<span>总想做出<br/>点东西。</span></h1>
+      <p class="intro">一只喜欢拆解问题的小狗。安静、有点倔，总会在两个不相干的想法之间，突然发现新的联系。</p>
+      <div class="actions"><a class="button" href="#meet">认识阿拾 ↓</a><a class="button secondary" href="#motion">看它动起来 ↓</a></div>
+    </div>
+    <figure class="master"><img src={`${base}/master-1200.webp`} srcset={`${base}/master-600.webp 600w, ${base}/master-1200.webp 1200w`} sizes="(max-width:720px) calc(100vw - 44px), (max-width:1320px) 43vw, 520px" width="1200" height="1600" alt="阿拾已选定的三维气质校准版主形象" fetchpriority="high"/><figcaption>ASHI / 三维主形象</figcaption></figure>
+  </header>
+
+  <section id="meet" class="ashi-section" aria-labelledby="meet-heading">
+    <div class="section-title"><h2 id="meet-heading">认真，也会绕一点远路。</h2><span class="annot">01 / CHARACTER</span></div>
+    <div class="traits">
+      <article><span class="eyebrow">发现</span><h3>「原来还能这样。」</h3><p>阿拾最开心的时刻，是突然发现一条跨领域的联系，然后迫不及待地做一个小实验。</p></article>
+      <article><span class="eyebrow">打磨</span><h3>再改一个小地方。</h3><p>认真也会变成困住自己的细节。一个问题没想明白，就很难轻轻放下。</p></article>
+      <article><span class="eyebrow">学习</span><h3>不必每次都证明自己。</h3><p>它要慢慢学会：认真对待发现与求助，也允许自己有暂时做不出来的事情。</p></article>
+    </div>
+  </section>
+
+  <section class="ashi-section" aria-labelledby="expressions-heading">
+    <div class="section-title"><h2 id="expressions-heading">心里的话，先写在脸上。</h2><span class="annot">02 / EXPRESSIONS</span></div>
+    <div class="expressions">{expressions.map(item=><figure><img src={`${base}/${item.id}-640.webp`} srcset={`${base}/${item.id}-320.webp 320w, ${base}/${item.id}-640.webp 640w`} sizes="(max-width:720px) calc((100vw - 60px) / 2), (max-width:1320px) 22vw, 284px" width="640" height="640" alt={`阿拾三维表情：${item.name}`} loading="lazy"/><figcaption><h3>{item.name}</h3><p>{item.text}</p></figcaption></figure>)}</div>
+  </section>
+
+  <section class="ashi-section" aria-labelledby="scenes-heading">
+    <div class="section-title"><h2 id="scenes-heading">一个创作者的日常。</h2><span class="annot">03 / SMALL MOMENTS</span></div>
+    <p class="section-intro">这些是阿拾的角色场景。它有自己的日常，也有认真与走神来回切换的时候。</p>
+    <div class="scenes">{scenes.map(item=><figure><img src={`${base}/${item.id}-960.webp`} srcset={`${base}/${item.id}-480.webp 480w, ${base}/${item.id}-960.webp 960w`} sizes="(max-width:720px) calc(100vw - 44px), (max-width:1320px) 44vw, 588px" width="960" height="1280" alt={`阿拾三维角色场景：${item.name}`} loading="lazy"/><figcaption><h3>{item.name}</h3><p>{item.text}</p></figcaption></figure>)}</div>
+  </section>
+
+  <section id="motion" class="ashi-section" aria-labelledby="motion-heading">
+    <div class="section-title"><h2 id="motion-heading">让阿拾动起来。</h2><span class="annot">04 / CHARACTER ID</span></div>
+    <video controls playsinline preload="none" width="1280" height="720" poster={`${base}/character-id-poster.jpg`} aria-label="阿拾角色 ID 短片"><source src={`${base}/character-id.mp4`} type="video/mp4"/><p>浏览器无法播放此视频，<a href={`${base}/character-id.mp4`}>可直接打开角色短片</a>。</p></video>
+    <p class="video-note">一段角色动态实验。点击播放，可随时暂停。</p>
+  </section>
+
+  <section class="ashi-section" aria-labelledby="design-heading">
+    <div class="section-title"><h2 id="design-heading">让每一次出现，都还是它。</h2><span class="annot">05 / DESIGN</span></div>
+    <figure class="turnaround"><img src={`${base}/turnaround-1600.webp`} srcset={`${base}/turnaround-800.webp 800w, ${base}/turnaround-1600.webp 1600w`} sizes="(max-width:720px) calc(100vw - 44px), (max-width:1320px) calc(100vw - 112px), 1208px" width="1600" height="900" alt="阿拾三维标准三视图，展示同一角色的不同朝向" loading="lazy"/><figcaption>三维形象的比例与造型参考。</figcaption></figure>
+  </section>
+
+  <section class="creator ashi-section" aria-labelledby="creator-heading">
+    <div><p class="eyebrow">A note from violin</p><h2 id="creator-heading">阿拾的故事，<br/>和我的创作。</h2></div>
+    <div><p>阿拾的形象原型，是陪伴我多年的贵宾犬「石榴」。它也带着我在研究与创作里的一些习惯：拆问题、记线索，遇到有意思的联系就想试一试。</p><p>但阿拾拥有自己的性格和日常。它讲角色世界里的故事；我以真实创作者的身份，记录设计选择与制作过程。</p><p>这个项目会继续生长。这里先呈现三维主形象、部分表情、场景和动态实验。</p><div class="actions"><a class="button secondary" href="/visuals/">更多图像创作 →</a><a class="button secondary" href="/about/">认识 violin →</a></div></div>
+  </section>
+</BaseLayout>
+<style>
+  .back{display:inline-block;font-size:12px;margin-top:32px}.ashi-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:center;gap:72px;padding:40px 0 64px}.hero-copy h1{font:700 clamp(52px,6vw,88px)/1.1 var(--serif);letter-spacing:-.04em;margin:24px 0}.hero-copy h1 span{display:block;font-size:.63em;line-height:1.35;margin-top:24px}.intro{font-size:16px;line-height:2;max-width:26em;color:var(--quiet)}figure{margin:0}.master{max-width:520px;justify-self:end}.master img,.expressions img,.scenes img,.turnaround img{display:block;width:100%;height:auto}.master figcaption,.turnaround figcaption{font-size:11px;color:var(--quiet);line-height:1.8;margin-top:12px}.ashi-section{margin-top:64px;scroll-margin-top:28px}.section-title{flex-wrap:wrap}.traits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}.traits h3{font:700 23px/1.5 var(--serif);margin:20px 0 14px}.traits p,.section-intro,.creator p{font-size:14px;line-height:2;color:var(--quiet)}.expressions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}.expressions h3,.scenes h3{font:700 23px/1.5 var(--serif);margin:18px 0 8px}.expressions p,.scenes p{font-size:13px;color:var(--quiet);line-height:1.9}.section-intro{margin:-8px 0 28px}.scenes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#1c1a16}.video-note{font-size:12px;color:var(--quiet);margin-top:14px}.creator{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;padding-top:32px;border-top:1px solid var(--ink)}.creator h2{font:700 34px/1.45 var(--serif);margin-top:20px}.creator p+p{margin-top:20px}
+  @media(max-width:720px){.back{margin-top:24px}.ashi-hero{grid-template-columns:minmax(0,1fr);padding-top:30px;gap:36px}.hero-copy h1{font-size:62px}.master{max-width:none;width:100%;justify-self:stretch}.traits{grid-template-columns:minmax(0,1fr);gap:30px}.traits h3{margin-top:12px}.expressions{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 16px}.expressions h3{font-size:21px}.scenes{grid-template-columns:minmax(0,1fr);gap:36px}.ashi-section{margin-top:48px}.creator{grid-template-columns:minmax(0,1fr);gap:24px}.creator h2{font-size:30px}.section-title .annot{font-size:10px}}
+</style>

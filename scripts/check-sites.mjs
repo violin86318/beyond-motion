@@ -185,12 +185,12 @@ export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..'
   assert.deepEqual([...music.matchAll(/data-music-entry-id="([^"]+)"/g)].map(match => match[1]), getSites({ category: 'music' }).map(site => site.id), '音乐首屏三个同级入口须与清单一致');
   assert(music.includes('class="disc"'), '音乐页须保留唱片Hero');
   checkPortalExclusions(root);
-  for (const [route, label] of [['works','影像'], ['works/dingying-fix','影像'], ['visuals','图像'], ['music','音乐'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
+  for (const [route, label] of [['works','影像'], ['works/dingying-fix','影像'], ['visuals','图像'], ['music','音乐'], ['projects/ashi','阿拾'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
     const html = readPage(route);
     assert(new RegExp(`<a[^>]+aria-current="page"[^>]*>${label}</a>`).test(html), `栏目高亮有误：${route}`);
   }
   const sitemap = readDist(root, 'sitemap.xml');
-  for (const route of ['visuals', 'reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
+  for (const route of ['visuals', 'projects/ashi', 'reading', 'tools', 'sites']) assert(sitemap.includes(`https://beyondmotion.net/${route}</loc>`), `sitemap缺少${route}`);
   const entries = getSites().length;
   console.log(`Site catalogue: ${entries} entries, status/URL/cover checks passed.`);
   return {entries};
