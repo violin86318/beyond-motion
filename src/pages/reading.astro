@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
 import SiteCard from '../components/SiteCard.astro';
+import NoteList from '../components/NoteList.astro';
 import { getSites } from '../lib/sites.mjs';
 const sites = getSites({ category: 'reading' });
 const notes = (await getCollection('notes', ({ data }) => !data.draft))
@@ -9,9 +10,9 @@ const notes = (await getCollection('notes', ({ data }) => !data.draft))
 ---
 <BaseLayout title="阅读" description="violin 的原创文章、Every 中文编译与科技资讯入口。">
   <header class="page-head"><span class="eyebrow">Reading / 保持好奇</span><h1>沿着好问题，<br/>继续读。</h1><p>自己的文章、编译的长文，以及让我保持好奇的科技资讯。它们通向不同的地方，也一起构成我的阅读与思考。</p></header>
-  <section><div class="section-title"><h2>原创文章</h2><a href="/notes/">全部文章与手记 →</a></div><div class="notes">{notes.map(note => <a class="note" href={`/notes/${note.id}/`}><span class="annot">{note.data.date}</span><div><h3>{note.data.title}</h3><p>{note.data.description}</p></div><span aria-hidden="true">→</span></a>)}</div>{!notes.length && <p class="empty">新的文章正在准备，可以先读下面的小站。</p>}</section>
+  <section><div class="section-title"><h2>原创文章</h2><a href="/notes/">全部文章与手记 →</a></div><NoteList notes={notes} />{!notes.length && <p class="empty">新的文章正在准备，可以先读下面的小站。</p>}</section>
   <section class="reading-sites"><div class="section-title"><h2>编译与资讯</h2><a href="/sites/#reading">在小站目录中查看 →</a></div><p class="section-intro">长文在编译站里慢读，新动态在资讯站里浏览。点开卡片，进入各站继续阅读。</p>{sites.length ? <div class="site-grid">{sites.map(site => <SiteCard site={site} />)}</div> : <p class="empty">这个方向的小站正在准备。</p>}</section>
 </BaseLayout>
 <style>
-  .note{display:grid;grid-template-columns:110px minmax(0,1fr) 20px;gap:24px;padding:25px 0;border-bottom:1px solid var(--faint);text-decoration:none;align-items:baseline}.note h3{font:700 24px/1.5 var(--serif);margin-bottom:8px}.note p{font-size:13px;line-height:1.9;color:var(--quiet);max-width:48em}.note:hover h3{color:var(--or)}.reading-sites{margin-top:68px}.section-intro{font-size:13px;line-height:1.9;color:var(--quiet);margin:-12px 0 30px}.empty{padding:24px 0;color:var(--quiet);font-size:14px}@media(max-width:720px){.note{grid-template-columns:minmax(0,1fr) 20px;gap:12px}.note>.annot{grid-column:1/-1}.note h3{font-size:22px}.reading-sites{margin-top:48px}}
+.reading-sites{margin-top:68px}.section-intro{font-size:13px;line-height:1.9;color:var(--quiet);margin:-12px 0 30px}.empty{padding:24px 0;color:var(--quiet);font-size:14px}@media(max-width:720px){.reading-sites{margin-top:48px}}
 </style>

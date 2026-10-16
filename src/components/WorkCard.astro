@@ -3,8 +3,8 @@
 import type { CollectionEntry } from 'astro:content';
 import GenerativeThumb from './GenerativeThumb.astro';
 
-interface Props { no: string; work: CollectionEntry<'works'>; delay?: string; }
-const { no, work, delay } = Astro.props;
+interface Props { no: string; work: CollectionEntry<'works'>; delay?: string; layout?: 'list' | 'grid'; }
+const { no, work, delay, layout = 'list' } = Astro.props;
 const { title, type, date, description, tech } = work.data;
 
 const TAG: Record<string, { label: string; live?: boolean }> = {
@@ -17,14 +17,14 @@ const tag = TAG[type];
 // 由 id 派生稳定 seed
 const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000, 7);
 ---
-<a class="work" href={`/works/${work.id}`} data-type={type} data-reveal style={delay ? `--rd:${delay}` : undefined}>
+<a class:list={['work', { 'work-grid': layout === 'grid' }]} href={`/works/${work.id}`} data-work-id={work.id} data-type={type} data-reveal style={delay ? `--rd:${delay}` : undefined}>
   <span class="no annot">{no}</span>
   {work.data.poster
     ? <img class="thumb" src={work.data.poster} alt={work.data.posterAlt ?? title} width="1280" height="720" loading="lazy" />
     : <GenerativeThumb seed={seed} class="thumb" />}
   <span class="meta">
     <b>{title}<span class="arrow" aria-hidden="true">→</span></b>
-    <small class="annot">{work.data.duration && `${work.data.duration} · `}{tech.join(' · ')} · {date}</small>
+    <small class="annot">{work.data.duration && `${work.data.duration} · `}{layout === 'grid' ? (work.data.orientation === 'portrait' ? '9:16 竖屏' : '16:9 横屏') : tech.join(' · ')} · {date}</small>
     <span class="desc">{description}</span>
   </span>
   <span class:list={['tag', 'annot', { live: tag.live }]}>{tag.label}</span>
@@ -89,6 +89,12 @@ const seed = [...work.id].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) % 100000
   }
   .tag.live { color: var(--or); border-color: rgba(255, 90, 31, .45); }
   .work:hover .tag.live { background: var(--or); color: var(--paper); }
+
+  .work-grid{display:flex;flex-direction:column;align-items:stretch;padding:0 0 24px;gap:14px}
+  .work-grid .no,.work-grid .tag{display:none}
+  .work-grid .thumb{width:100%;background:#181816}
+  .work-grid .meta{gap:12px}
+  .work-grid .meta b{font:700 22px/1.5 var(--serif)}
 
   @media (max-width: 720px) {
     .work { grid-template-columns: 40px 1fr; gap: 12px; padding-left: 12px; }

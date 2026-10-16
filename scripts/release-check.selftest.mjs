@@ -4,6 +4,8 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
 import {assertSiteLinkRules} from './check-sites.mjs';
+import {checkSiteCoverArtwork} from './check-site-covers.mjs';
+import sharp from 'sharp';
 import {
   assertFixedNpmScripts,
   assertHtmlLinks,
@@ -295,12 +297,35 @@ async function runRepoGuards() {
   });
 }
 
+async function runCoverFixtures() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cover-check-'));
+  try {
+    fs.mkdirSync(path.join(dir, 'public'));
+    const large = path.join(dir, 'public/large.webp');
+    const small = path.join(dir, 'public/small.webp');
+    const record = {id: 'fixture', status: 'public', cover: '/large.webp', coverSmall: '/small.webp'};
+    await sharp({create: {width: 1200, height: 800, channels: 3, background: '#f4f1e8'}}).webp().toFile(large);
+    await sharp({create: {width: 600, height: 400, channels: 3, background: '#f4f1e8'}}).webp().toFile(small);
+    assert.deepEqual(await checkSiteCoverArtwork(dir, [record]), {entries: 1, images: 2});
+    await assert.rejects(checkSiteCoverArtwork(dir, [{...record, coverSmall: null}]), /两档封面/);
+    await assert.rejects(checkSiteCoverArtwork(dir, [record, {...record, id: 'duplicate'}]), /专用封面/);
+    await sharp({create: {width: 600, height: 600, channels: 3, background: '#f4f1e8'}}).webp().toFile(path.join(dir, 'public/wrong-ratio.webp'));
+    await assert.rejects(checkSiteCoverArtwork(dir, [{...record, coverSmall: '/wrong-ratio.webp'}]), /3:2/);
+    fs.writeFileSync(path.join(dir, 'public/corrupt.webp'), 'corrupt image');
+    await assert.rejects(checkSiteCoverArtwork(dir, [{...record, coverSmall: '/corrupt.webp'}]));
+    console.log('已通过：两档封面正常解码；缺图、重复、错误画幅与损坏图片均被拦住');
+  } finally {
+    fs.rmSync(dir, {recursive: true, force: true});
+  }
+}
+
 export async function runSelfTest() {
   failures.length = 0;
   runLinkFixtures();
   runContentFixtures();
   runAstroFixtures();
   await runRepoGuards();
+  await runCoverFixtures();
   if (failures.length > 0) {
     throw new Error(`自测未拦住：\n${failures.map((label) => `- ${label}`).join('\n')}`);
   }

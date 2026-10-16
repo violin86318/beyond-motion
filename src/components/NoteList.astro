@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { notes: CollectionEntry<'notes'>[]; heading?: 'h2' | 'h3'; }
+const { notes, heading: Heading = 'h3' } = Astro.props;
+const kinds = { log: '手记', piece: '文章' };
+---
+<div class="note-list">
+  {notes.map((note, index) => <a class="note-entry" href={`/notes/${note.id}/`} data-note-id={note.id}>
+    <span class="note-meta annot"><span>{String(index + 1).padStart(2, '0')} / {kinds[note.data.kind]}</span><time datetime={note.data.date}>{note.data.date}</time></span>
+    <span class="note-body"><Heading>{note.data.title}</Heading><span class="description">{note.data.description}</span></span>
+    <span class="note-arrow" aria-hidden="true">→</span>
+  </a>)}
+</div>
+<style>
+  .note-list{border-top:1px solid var(--faint)}.note-entry{display:grid;grid-template-columns:140px minmax(0,1fr) 24px;gap:28px;padding:30px 0;border-bottom:1px solid var(--faint);text-decoration:none;align-items:baseline}.note-meta{display:grid;gap:8px;color:var(--quiet)}.note-meta>span{color:var(--or)}.note-body{min-width:0}.note-body h2,.note-body h3{font:700 25px/1.5 var(--serif);margin:0 0 10px;overflow-wrap:anywhere}.description{display:block;font-size:13px;line-height:1.95;color:var(--quiet);max-width:52em}.note-entry:hover :is(h2,h3),.note-arrow{color:var(--or)}
+  @media(max-width:720px){.note-entry{grid-template-columns:minmax(0,1fr) 24px;gap:14px;padding:24px 0}.note-meta{grid-column:1/-1;display:flex;gap:18px;flex-wrap:wrap}.note-body h2,.note-body h3{font-size:23px}}
+</style>

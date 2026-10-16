@@ -16,7 +16,8 @@
     "verify": "node scripts/verify.mjs",
     "test:checks": "node scripts/release-check.selftest.mjs",
     "check:astro": "astro check",
-    "deploy:all": "bash scripts/deploy-all.sh"
+    "deploy:all": "bash scripts/deploy-all.sh",
+    "covers:sites": "node scripts/build-site-covers.mjs"
   },
   "dependencies": {
     "astro": "^5.13.0"

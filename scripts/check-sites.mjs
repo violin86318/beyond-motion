@@ -19,7 +19,7 @@ export function assertSiteLinkRules() {
   for (const url of ['javascript:alert(1)', '//unsafe.example/', 'https://user:pass@example.com/', 'https://example.com/#hidden']) {
     assert.throws(() => validateSites([{ ...sample, url }]), /地址|HTTPS/);
   }
-  const entry = (id, url) => ({ ...sample, id, url, cover: null, coverAlt: '', featured: false });
+  const entry = (id, url) => ({ ...sample, id, url, cover: null, coverSmall: null, coverAlt: '', featured: false });
   for (const [url, external, href] of [
     ['/reading/', false, '/reading/'],
     ['/works/dingying-fix', false, '/works/dingying-fix'],
@@ -102,7 +102,7 @@ export function assertSiteLinkRules() {
     entry('internal-path', '/reading/'),
     entry('same-origin', 'https://beyondmotion.net/reading'),
   ]), /地址重复/);
-  assert.doesNotThrow(() => validateSites([{ ...sample, cover: null, coverAlt: '' }]));
+  assert.doesNotThrow(() => validateSites([{ ...sample, cover: null, coverSmall: null, coverAlt: '' }]));
 }
 
 function readDist(root, relativePosix) {
@@ -116,6 +116,8 @@ function assertCardLink(html, site) {
   assert(at >= 0, `缺少卡片：${site.id}`);
   const end = html.indexOf('</article>', at);
   const slice = html.slice(at, end === -1 ? at + 2000 : end);
+  if (site.cover) assert(slice.includes(`src="${site.cover}"`), `${site.id}封面未统一输出`);
+  if (site.coverSmall) assert(slice.includes(`${site.coverSmall} 600w, ${site.cover} 1200w`), `${site.id}封面未统一输出两档资源`);
   const link = resolveSiteLink(site.url);
   const href = link.href.replaceAll('&', '&amp;');
   assert(slice.includes(`href="${href}"`), `${site.id} 链接未按站内规则输出`);
@@ -141,6 +143,7 @@ export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..'
     if (!site.cover) continue;
     const cover = path.join(root, 'public', String(site.cover).replace(/^\/+/, ''));
     assert(fs.existsSync(cover), `封面不存在：${site.id}`);
+    if (site.coverSmall) assert(fs.existsSync(path.join(root, 'public', site.coverSmall.replace(/^\/+/, ''))), `小尺寸封面不存在：${site.id}`);
   }
 
   const directory = readDist(root, 'sites/index.html');
@@ -157,6 +160,14 @@ export function checkSiteCatalogue(root = path.resolve(import.meta.dirname, '..'
     for (const site of getSites({ category })) assertCardLink(html, site);
   }
   for (const site of getSites({ featured: true }).slice(0, 3)) assertCardLink(readPage(''), site);
+  for (const [route, expected] of [
+    ['music', getSites({ category: 'creative' }).filter(site => site.tags.includes('音乐'))],
+    ['studio', getSites({ category: 'tools' })],
+  ]) {
+    const html = readPage(route);
+    assert.deepEqual(cardIds(html), expected.map(site => site.id), `${route}须与目录同源`);
+    for (const site of expected) assertCardLink(html, site);
+  }
   for (const [route, label] of [['works','创作'], ['works/dingying-fix','创作'], ['music','创作'], ['notes','阅读'], ['reading','阅读'], ['studio','工具'], ['tools','工具'], ['sites','全部小站']]) {
     const html = readPage(route);
     assert(new RegExp(`<a[^>]+aria-current="page"[^>]*>${label}</a>`).test(html), `栏目高亮有误：${route}`);

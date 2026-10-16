@@ -4,6 +4,7 @@ import {spawnSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
 import {runReleaseChecks} from './check-release.mjs';
 import {runSelfTest} from './release-check.selftest.mjs';
+import {checkSiteCoverArtwork} from './check-site-covers.mjs';
 import {
   assertFixedNpmScripts,
   decideAstroCheck,
@@ -110,6 +111,14 @@ async function main() {
   } catch (error) {
     failed = true;
     sections.push({title: '发布检查失败', detail: error.message});
+  }
+
+  try {
+    const covers = await checkSiteCoverArtwork(root);
+    sections.push({title: '入口封面', detail: `${covers.entries} 站 / ${covers.images} 张图片实际解码通过，1200×800 与 600×400。`});
+  } catch (error) {
+    failed = true;
+    sections.push({title: '入口封面失败', detail: error.message});
   }
 
   const astro = runAstroPolicy();

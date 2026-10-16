@@ -75,6 +75,7 @@ export function validateSites(records) {
     urls.add(link.normalized);
     if (site.cover !== null && (typeof site.cover !== 'string' || !/^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_.-]+\.(?:webp|jpg|jpeg|png|svg)$/.test(site.cover))) fail('封面须为public内的图片路径，缺图填null');
     if (site.cover && (typeof site.coverAlt !== 'string' || !site.coverAlt.trim())) fail('封面缺少文字说明');
+    if (site.coverSmall != null && (!site.cover || typeof site.coverSmall !== 'string' || !/^\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_.-]+\.(?:webp|jpg|jpeg|png)$/.test(site.coverSmall))) fail('小尺寸封面须为public内的图片路径且有主封面');
   }
   return records;
 }

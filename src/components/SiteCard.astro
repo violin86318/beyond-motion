@@ -1,6 +1,6 @@
 ---
 import { categories, resolveSiteLink } from '../lib/sites.mjs';
-const { site } = Astro.props;
+const { site, sizes = '(max-width: 720px) calc(100vw - 44px), (max-width: 1000px) calc((100vw - 140px) / 2), (max-width: 1320px) calc((100vw - 168px) / 3), 384px' } = Astro.props;
 const link = resolveSiteLink(site.url);
 const external = link.external;
 const category = categories.find(category => category.id === site.category);
@@ -8,7 +8,10 @@ const category = categories.find(category => category.id === site.category);
 <article class="site-card" data-site-id={site.id}>
   <a href={link.href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>
     <div class:list={['cover', `tone-${site.category}`]}>
-      {site.cover ? <img src={site.cover} alt={site.coverAlt} width="900" height="600" loading="lazy" /> :
+      {site.cover ? <img src={site.cover}
+        srcset={site.coverSmall ? `${site.coverSmall} 600w, ${site.cover} 1200w` : undefined}
+        sizes={sizes}
+        alt={site.coverAlt} width="1200" height="800" loading="lazy" decoding="async" /> :
         <div class="type-cover" aria-hidden="true"><span>VIOLIN / {category?.name}</span><strong>{site.name}</strong><span>{site.tags.join(' · ')}<i>{external ? '↗' : '→'}</i></span></div>}
     </div>
     <div class="meta"><span>{category?.name} / {site.tags.join(' · ')}</span>{site.status === 'archived' && <span class="archived">已归档</span>}</div>
@@ -19,5 +22,5 @@ const category = categories.find(category => category.id === site.category);
   </a>
 </article>
 <style>
-  .site-card{min-width:0}.site-card>a{display:block;height:100%;text-decoration:none}.cover{aspect-ratio:3/2;display:grid;place-items:center;background:#e8e2d5;border:1px solid var(--faint);overflow:hidden}.cover img{display:block;width:100%;height:100%;min-height:0;object-fit:contain}.type-cover{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px;color:var(--ink)}.type-cover>span{font:10px var(--mono);letter-spacing:.1em;display:flex;justify-content:space-between;gap:12px}.type-cover strong{font:500 clamp(25px,3vw,38px)/1.25 var(--serif);overflow-wrap:anywhere;letter-spacing:-.03em}.type-cover i{font-style:normal;font-size:18px}.tone-reading{background:#dde3dc}.tone-tools{background:#e7d9cd}.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:10px/1.8 var(--sans);color:var(--quiet);margin-top:18px}.site-host{display:block;max-width:100%;margin-top:10px;font:10px/1.5 var(--mono);letter-spacing:.03em;color:var(--quiet);overflow-wrap:anywhere}.archived{border:1px solid var(--faint);padding:0 6px}.site-card h3{font:700 26px/1.4 var(--serif);margin:9px 0 10px;display:flex;justify-content:space-between;gap:16px;overflow-wrap:anywhere}.site-card h3>span{font:20px var(--sans);color:var(--or);flex-shrink:0}.site-card p{font-size:13px;line-height:1.95;color:var(--quiet)}.visit{display:inline-block;font-size:12px;margin-top:18px;border-bottom:1px solid var(--faint);padding-bottom:4px}.site-card a:hover h3,.site-card a:hover .visit{color:var(--or)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:720px){.type-cover{padding:25px}.type-cover strong{font-size:36px}}
+  .site-card{min-width:0}.site-card>a{display:block;height:100%;text-decoration:none}.cover{aspect-ratio:3/2;display:grid;place-items:center;background:#e8e2d5;border:1px solid var(--faint);overflow:hidden}.cover img{display:block;width:100%;height:100%;min-height:0;object-fit:cover}.type-cover{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:24px;color:var(--ink)}.type-cover>span{font:10px var(--mono);letter-spacing:.1em;display:flex;justify-content:space-between;gap:12px}.type-cover strong{font:500 clamp(25px,3vw,38px)/1.25 var(--serif);overflow-wrap:anywhere;letter-spacing:-.03em}.type-cover i{font-style:normal;font-size:18px}.tone-reading{background:#dde3dc}.tone-tools{background:#e7d9cd}.meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:10px/1.8 var(--sans);color:var(--quiet);margin-top:18px}.site-host{display:block;max-width:100%;margin-top:10px;font:10px/1.5 var(--mono);letter-spacing:.03em;color:var(--quiet);overflow-wrap:anywhere}.archived{border:1px solid var(--faint);padding:0 6px}.site-card h3{font:700 26px/1.4 var(--serif);margin:9px 0 10px;display:flex;justify-content:space-between;gap:16px;overflow-wrap:anywhere}.site-card h3>span{font:20px var(--sans);color:var(--or);flex-shrink:0}.site-card p{font-size:13px;line-height:1.95;color:var(--quiet)}.visit{display:inline-block;font-size:12px;margin-top:18px;border-bottom:1px solid var(--faint);padding-bottom:4px}.site-card a:hover h3,.site-card a:hover .visit{color:var(--or)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:720px){.type-cover{padding:25px}.type-cover strong{font-size:36px}}
 </style>

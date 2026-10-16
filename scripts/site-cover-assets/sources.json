@@ -1,0 +1,97 @@
+{
+  "checked": "2026-10-15",
+  "note": "Public source material for purpose-designed portal entry artwork. These covers are static compositions, not screenshots or automatically updated content. Vector illustrations and typography are authored in build-site-covers.mjs.",
+  "sources": [
+    {
+      "file": "scripts/site-cover-assets/album-1.jpg",
+      "source": "https://music.beyondmotion.net/media/tongzhuo-7e07494e59ba4707.jpg",
+      "title": "六月之后"
+    },
+    {
+      "file": "scripts/site-cover-assets/album-2.jpg",
+      "source": "https://music.beyondmotion.net/media/bianlidian-22611a2867072132.jpg",
+      "title": "便利店，夜还亮着"
+    },
+    {
+      "file": "scripts/site-cover-assets/album-3.jpg",
+      "source": "https://music.beyondmotion.net/",
+      "title": "记忆的暗房"
+    },
+    {
+      "file": "scripts/site-cover-assets/album-4.jpg",
+      "source": "https://music.beyondmotion.net/",
+      "title": "尚未说出口"
+    },
+    {
+      "file": "scripts/site-cover-assets/style-1.jpg",
+      "source": "https://style.1986318.xyz/covers/2026-10-15_%E6%B2%89%E9%A6%99%E5%B1%91.web-278ef2afd02e7749.jpg",
+      "title": "Image 1: 《沉香屑》封面"
+    },
+    {
+      "file": "scripts/site-cover-assets/style-2.jpg",
+      "source": "https://style.1986318.xyz/covers/2026-10-15_%E4%BD%8E%E5%88%B0%E5%B0%98%E5%9F%83.web-79e989ab28fc6b63.jpg",
+      "title": "Image 2: 《低到尘埃》封面"
+    },
+    {
+      "file": "scripts/site-cover-assets/style-3.jpg",
+      "source": "https://style.1986318.xyz/covers/2026-10-12_%E9%81%8D%E5%8E%86%E6%80%A7.web-6a72dcdfeca5750d.jpg",
+      "title": "Image 4: 《遍历性》封面"
+    }
+  ],
+  "existing": [
+    {
+      "file": "public/sites/zine.webp",
+      "url": "https://zine-1986318.pages.dev/zine_2026-10-13.png",
+      "title": "蓼花 · 2026-10-13（非草稿）"
+    },
+    {
+      "file": "public/sites/every.webp",
+      "url": "https://every.beyondmotion.net/",
+      "title": "一个 Agent 服务整家公司 · 公开文章配图"
+    },
+    {
+      "file": "studio-sites/wedding/images/announce-la-retro-travel.webp",
+      "url": "https://wedding.beyondmotion.net/",
+      "title": "海风复古字弧"
+    },
+    {
+      "file": "studio-sites/wedding/images/announce-premiere.webp",
+      "url": "https://wedding.beyondmotion.net/",
+      "title": "院线首映海报"
+    },
+    {
+      "file": "studio-sites/portrait/images/p-0cf5eaf443d6538b-1.webp",
+      "url": "https://portrait.beyondmotion.net/"
+    },
+    {
+      "file": "studio-sites/portrait/images/p-511e9cdbbb733b3a-1.webp",
+      "url": "https://portrait.beyondmotion.net/"
+    },
+    {
+      "file": "studio-sites/portrait/images/p-33b72a5cd38dd495-1.webp",
+      "url": "https://portrait.beyondmotion.net/"
+    }
+  ],
+  "illustrations": [
+    {
+      "id": "inspiration-music",
+      "url": "https://music.1986318.xyz/",
+      "subject": "声音日记；阅读、观察、成长；昨日回响、成长编年史"
+    },
+    {
+      "id": "tomato-music",
+      "url": "https://tomato.1986318.xyz/",
+      "subject": "五种音乐口味；番茄唱片插画"
+    },
+    {
+      "id": "horizon",
+      "url": "https://horizon.1986318.xyz/",
+      "subject": "全球RSS筛选、评分、中英双语简报；雷达与地平线插画"
+    },
+    {
+      "id": "ai-daily",
+      "url": "https://aihot.1986318.xyz/",
+      "subject": "每日AI行业日报；报纸与芯片插画"
+    }
+  ]
+}

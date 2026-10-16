@@ -4,129 +4,169 @@
     "name": "纸上片刻",
     "description": "把日常的节气、植物与心情，收进一页视觉日刊。翻一页，停留片刻。",
     "category": "creative",
-    "tags": ["视觉", "日刊"],
+    "tags": [
+      "视觉",
+      "日刊"
+    ],
     "url": "https://zine-1986318.pages.dev/",
-    "cover": "/sites/zine.webp",
-    "coverAlt": "纸上片刻 2026年10月13日「蓼花」日刊海报",
+    "cover": "/sites/covers/paper-moments-1200.webp",
+    "coverAlt": "纸上片刻入口封面：日刊纸页与手绘蓼花枝叶",
     "status": "public",
     "featured": true,
-    "order": 10
+    "order": 10,
+    "coverSmall": "/sites/covers/paper-moments-600.webp"
   },
   {
     "id": "album-room",
     "name": "专辑听室",
     "description": "按主题编排的原创歌曲选集。听音乐，也读一首歌背后的创作手记。",
     "category": "creative",
-    "tags": ["音乐", "精选专辑"],
+    "tags": [
+      "音乐",
+      "精选专辑"
+    ],
     "url": "https://music.beyondmotion.net/",
-    "cover": "/sites/music.webp",
-    "coverAlt": "专辑听室《六月之后》中的同桌曲目封面",
+    "cover": "/sites/covers/album-room-1200.webp",
+    "coverAlt": "专辑听室入口封面：六月之后、便利店、记忆的暗房和尚未说出口四张主题选集",
     "status": "public",
     "featured": false,
-    "order": 20
+    "order": 20,
+    "coverSmall": "/sites/covers/album-room-600.webp"
   },
   {
     "id": "inspiration-music",
     "name": "灵感音乐",
     "description": "从生活与想法中长出的歌曲，收录完整曲库，随时找一首来听。",
     "category": "creative",
-    "tags": ["音乐", "灵感"],
+    "tags": [
+      "音乐",
+      "灵感"
+    ],
     "url": "https://music.1986318.xyz/",
-    "cover": null,
-    "coverAlt": "",
+    "cover": "/sites/covers/inspiration-music-1200.webp",
+    "coverAlt": "灵感音乐入口封面：写着音符、昨日回响和成长编年史的声音日记",
     "status": "public",
     "featured": false,
-    "order": 30
+    "order": 30,
+    "coverSmall": "/sites/covers/inspiration-music-600.webp"
   },
   {
     "id": "tomato-music",
     "name": "番茄音乐报",
-    "description": "把新闻与当下写进旋律，以音乐的方式记录这个世界。",
+    "description": "五种音乐口味，把热闹、想念与家乡的故事唱给日常听。按今天的心情，选一首跟着唱。",
     "category": "creative",
-    "tags": ["音乐", "时事"],
+    "tags": [
+      "音乐",
+      "日常情绪"
+    ],
     "url": "https://tomato.1986318.xyz/",
-    "cover": null,
-    "coverAlt": "",
+    "cover": "/sites/covers/tomato-music-1200.webp",
+    "coverAlt": "番茄音乐报入口封面：番茄唱片与五种音乐口味",
     "status": "public",
     "featured": false,
-    "order": 40
+    "order": 40,
+    "coverSmall": "/sites/covers/tomato-music-600.webp"
   },
   {
     "id": "style-room",
     "name": "风格听室",
     "description": "从不同音乐风格出发的声音实验，按口味探索，也允许偶遇。",
     "category": "creative",
-    "tags": ["音乐", "风格实验"],
+    "tags": [
+      "音乐",
+      "风格实验"
+    ],
     "url": "https://style.1986318.xyz/",
-    "cover": null,
-    "coverAlt": "",
+    "cover": "/sites/covers/style-room-1200.webp",
+    "coverAlt": "风格听室入口封面：流行、民谣、电子与氛围的真实作品陈列",
     "status": "public",
     "featured": false,
-    "order": 50
+    "order": 50,
+    "coverSmall": "/sites/covers/style-room-600.webp"
   },
   {
     "id": "every-reading",
     "name": "Every 编译",
     "description": "围绕 AI、工作与创造力的中文编译阅读，保留原文来源，方便继续追读。",
     "category": "reading",
-    "tags": ["编译", "AI 与工作"],
+    "tags": [
+      "编译",
+      "AI 与工作"
+    ],
     "url": "https://every.beyondmotion.net/",
-    "cover": "/sites/every.webp",
-    "coverAlt": "Every 编译文章「一个 Agent 服务整家公司」的公开封面",
+    "cover": "/sites/covers/every-reading-1200.webp",
+    "coverAlt": "Every编译入口封面：公开文章配图与AI、工作、创造力的编译主题",
     "status": "public",
     "featured": true,
-    "order": 60
+    "order": 60,
+    "coverSmall": "/sites/covers/every-reading-600.webp"
   },
   {
     "id": "horizon",
     "name": "Horizon",
     "description": "科技资讯与前沿动态，从一个入口看看正在发生的新变化。",
     "category": "reading",
-    "tags": ["资讯", "科技"],
+    "tags": [
+      "资讯",
+      "科技"
+    ],
     "url": "https://horizon.1986318.xyz/",
-    "cover": null,
-    "coverAlt": "",
+    "cover": "/sites/covers/horizon-1200.webp",
+    "coverAlt": "Horizon入口封面：从信息星点中筛选信号的地平线雷达",
     "status": "public",
     "featured": false,
-    "order": 70
+    "order": 70,
+    "coverSmall": "/sites/covers/horizon-600.webp"
   },
   {
     "id": "ai-daily",
     "name": "AI DAILY",
     "description": "AI 新闻与行业动态，集中浏览新工具、新产品和热点消息。",
     "category": "reading",
-    "tags": ["资讯", "AI"],
+    "tags": [
+      "资讯",
+      "AI"
+    ],
     "url": "https://aihot.1986318.xyz/",
-    "cover": null,
-    "coverAlt": "",
+    "cover": "/sites/covers/ai-daily-1200.webp",
+    "coverAlt": "AI DAILY入口封面：芯片插画与每日AI行业报纸",
     "status": "public",
     "featured": false,
-    "order": 80
+    "order": 80,
+    "coverSmall": "/sites/covers/ai-daily-600.webp"
   },
   {
     "id": "shiliu-wedding",
     "name": "石榴婚礼",
     "description": "婚礼预告、邀请函与焕新灵感。选样式、填信息，复制适合自己的图像提示词。",
     "category": "tools",
-    "tags": ["婚礼", "提示词工具"],
+    "tags": [
+      "婚礼",
+      "提示词工具"
+    ],
     "url": "https://wedding.beyondmotion.net/",
-    "cover": "/studio/wedding.webp",
-    "coverAlt": "石榴婚礼精选邀请函样式",
+    "cover": "/sites/covers/shiliu-wedding-1200.webp",
+    "coverAlt": "石榴婚礼入口封面：海风复古请柬、院线首映海报与婚戒",
     "status": "public",
     "featured": true,
-    "order": 90
+    "order": 90,
+    "coverSmall": "/sites/covers/shiliu-wedding-600.webp"
   },
   {
     "id": "shiliu-portrait",
     "name": "石榴写真",
     "description": "从写真样片寻找方向，浏览风格与变体，复制提示词到自己使用的图像工具。",
     "category": "tools",
-    "tags": ["写真", "提示词工具"],
+    "tags": [
+      "写真",
+      "提示词工具"
+    ],
     "url": "https://portrait.beyondmotion.net/",
-    "cover": "/studio/portrait.webp",
-    "coverAlt": "石榴写真精选风格样片",
+    "cover": "/sites/covers/shiliu-portrait-1200.webp",
+    "coverAlt": "石榴写真入口封面：窗边暖光、雨幕黑白和夏日田野三种公开样片",
     "status": "public",
     "featured": false,
-    "order": 100
+    "order": 100,
+    "coverSmall": "/sites/covers/shiliu-portrait-600.webp"
   }
 ]
