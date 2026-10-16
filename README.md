@@ -23,6 +23,12 @@ npm run verify
 
 `npm run dev -- --port 7101` 是开发入口，改完页面可以立即查看。`dist/` 为主站产物；`.studio-dist/wedding/` 与 `.studio-dist/portrait/` 为两个小站的独立产物，均忽略进 Git。`npm run verify` 与 CI、`deploy:all` 使用同一组检查：链接按 HTML 所在目录解析，草稿和 RSS 条数从源码 frontmatter 推导，模板与 Pages 限制仍会检查，并核对小站清单、生成页面、封面、导航与 sitemap。`npm run check` 与 `npm run verify` 是同一条命令，都必须是 `node scripts/verify.mjs`，不能改成 `true`。`npm audit --audit-level=high` 只把结果写进日志，不让构建失败。`check:astro` 必须是 `astro check`；这个脚本已经在 `package.json` 里，类型检查因此是必过项，不能改成 `true` 或删掉脚本后再让 CI 变绿。
 
+### sitemap / RSS 地址检查（BEY-146）
+
+`npm run verify` 会检查 sitemap 与 RSS 的页面地址为主域最终尾斜杠地址、页面已构建、RSS 的 `pubDate` 有效。历史 RSS GUID 保持原值并标记 `isPermaLink="false"`，只作为条目标识，避免订阅器重复导入。现有文章只有年月时，RSS 日期取该月首日 00:00 UTC；原文日期不变。Pages 的 RSS 媒体类型由 `public/_headers` 声明。
+
+正式发布另行获批并完成后，手动运行 `node scripts/check-discovery.mjs --live`：它读取线上 sitemap/RSS，禁止自动跟随跳转，要求所列页面直接200，并验证 HTTP/HTTPS 的 www 入口以301保留路径和查询串跳主域。此命令只读，不部署；不放进离线构建CI。Cloudflare 域名规则独立于代码，本PR不修改规则。
+
 ### 7102 静态预览
 
 静态预览打开的是已经构建好的主站，地址为 http://127.0.0.1:7102 。在前台启动即可，不要注册开机启动项、后台服务或进程守护。
