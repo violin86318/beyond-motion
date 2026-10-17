@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-10-17",
+  "scope": "2026-05-27 through 2026-09-28; 125 calendar dates, not a claim of 125 generated works",
+  "counts": {
+    "source_files_reviewed_for_disposition": 148,
+    "dates_with_any_source": 119,
+    "square_candidates_for_visual_review": 61,
+    "visually_approved_in_this_audit": 0,
+    "dates_with_only_excluded_aspect_versions": 58,
+    "dates_with_no_source_found": 6,
+    "candidate_dates_without_saved_historical_copy": 31
+  },
+  "no_source_found_dates": [
+    "2026-07-18",
+    "2026-07-21",
+    "2026-09-02",
+    "2026-09-04",
+    "2026-09-11",
+    "2026-09-23"
+  ],
+  "handling": {
+    "old_aspect_versions": "Do not display or crop/pad as replacements; recover a valid square version or plan a separately authorized repair.",
+    "missing_source_dates": "Keep unresolved until a source, original character, and provenance are verified; do not invent a historical entry.",
+    "copy_drafts": "31 local-only modern interpretations are labeled as drafts and are not historical originals.",
+    "image_quality": "All 61 square candidates remain pending individual visual review.",
+    "privacy": "This public-safe summary omits private source filenames, absolute paths, fingerprints, and draft copy text."
+  }
+}
